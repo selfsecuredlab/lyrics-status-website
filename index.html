@@ -239,14 +239,14 @@
             <span class="scan-state" data-vt-state="setup">Checking</span>
           </div>
           <div class="scan-score">
-            <strong data-vt-score="setup">— / —</strong>
-            <span data-vt-verdict="setup">Waiting for analysis results</span>
+            <strong data-vt-score="setup">—</strong>
+            <span data-vt-verdict="setup">engines did not flag this file</span>
           </div>
-          <div class="scan-meter" aria-hidden="true"><i data-vt-meter="setup"></i></div>
+          <div class="scan-meter" aria-hidden="true"><span class="scan-meter-ok" data-vt-meter-ok="setup"></span><span class="scan-meter-hit" data-vt-meter-hit="setup"></span></div>
           <dl class="scan-breakdown">
-            <div><dt data-vt-malicious="setup">—</dt><dd>Malicious</dd></div>
-            <div><dt data-vt-suspicious="setup">—</dt><dd>Suspicious</dd></div>
-            <div><dt data-vt-undetected="setup">—</dt><dd>Not flagged</dd></div>
+            <div><dt data-vt-not-flagged="setup">—</dt><dd>Not flagged</dd></div>
+            <div><dt data-vt-flagged="setup">—</dt><dd>Flagged</dd></div>
+            <div><dt data-vt-no-verdict="setup">—</dt><dd>No verdict</dd></div>
           </dl>
           <div class="scan-card-meta">
             <div><span>SHA-256</span><code data-hash="setup" title="0bcfb718c3744a3491d94d9b576fe6d8ed8f71e4ea6365147cdd0af2f5d5da6c">0bcfb718…f5d5da6c</code></div>
@@ -261,14 +261,14 @@
             <span class="scan-state" data-vt-state="portable">Checking</span>
           </div>
           <div class="scan-score">
-            <strong data-vt-score="portable">— / —</strong>
-            <span data-vt-verdict="portable">Waiting for analysis results</span>
+            <strong data-vt-score="portable">—</strong>
+            <span data-vt-verdict="portable">engines did not flag this file</span>
           </div>
-          <div class="scan-meter" aria-hidden="true"><i data-vt-meter="portable"></i></div>
+          <div class="scan-meter" aria-hidden="true"><span class="scan-meter-ok" data-vt-meter-ok="portable"></span><span class="scan-meter-hit" data-vt-meter-hit="portable"></span></div>
           <dl class="scan-breakdown">
-            <div><dt data-vt-malicious="portable">—</dt><dd>Malicious</dd></div>
-            <div><dt data-vt-suspicious="portable">—</dt><dd>Suspicious</dd></div>
-            <div><dt data-vt-undetected="portable">—</dt><dd>Not flagged</dd></div>
+            <div><dt data-vt-not-flagged="portable">—</dt><dd>Not flagged</dd></div>
+            <div><dt data-vt-flagged="portable">—</dt><dd>Flagged</dd></div>
+            <div><dt data-vt-no-verdict="portable">—</dt><dd>No verdict</dd></div>
           </dl>
           <div class="scan-card-meta">
             <div><span>SHA-256</span><code data-hash="portable" title="1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994">1d0a0c6c…3ed47994</code></div>
@@ -277,7 +277,7 @@
         </article>
       </div>
 
-      <p class="scan-disclaimer"><span data-vt-release>Release v1.0.0</span> · Results can change as security vendors update their analysis. Zero detections does not guarantee a file is safe.</p>
+      <p class="scan-disclaimer"><span data-vt-release>Release v1.0.0</span> · No verdict means an engine timed out, failed, or did not support the file. Results can change over time.</p>
     </section>
 
     <section class="download-section section-shell" id="download">

@@ -70,13 +70,15 @@ function renderPendingVirusTotal(message = 'Waiting for the latest VirusTotal re
     const key = card.dataset.vtCard;
     card.dataset.state = 'pending';
     setText(`[data-vt-state="${key}"]`, 'Pending');
-    setText(`[data-vt-score="${key}"]`, '— / —');
+    setText(`[data-vt-score="${key}"]`, '—');
     setText(`[data-vt-verdict="${key}"]`, message);
-    setText(`[data-vt-malicious="${key}"]`, '—');
-    setText(`[data-vt-suspicious="${key}"]`, '—');
-    setText(`[data-vt-undetected="${key}"]`, '—');
-    const meter = document.querySelector(`[data-vt-meter="${key}"]`);
-    if (meter) meter.style.width = '34%';
+    setText(`[data-vt-not-flagged="${key}"]`, '—');
+    setText(`[data-vt-flagged="${key}"]`, '—');
+    setText(`[data-vt-no-verdict="${key}"]`, '—');
+    const okMeter = document.querySelector(`[data-vt-meter-ok="${key}"]`);
+    const hitMeter = document.querySelector(`[data-vt-meter-hit="${key}"]`);
+    if (okMeter) okMeter.style.width = '34%';
+    if (hitMeter) hitMeter.style.width = '0';
   });
 
   const overall = document.querySelector('[data-vt-overall]');
@@ -87,7 +89,7 @@ function renderPendingVirusTotal(message = 'Waiting for the latest VirusTotal re
 
 function renderVirusTotalFile(key, file) {
   const card = document.querySelector(`[data-vt-card="${key}"]`);
-  if (!card) return { available: false, state: 'pending', flagged: 0, analysisDate: null };
+  if (!card) return { available: false, state: 'pending', flagged: 0, notFlagged: 0, noVerdict: 0, analysisDate: null };
 
   const hash = String(file?.sha256 || '');
   if (hash) {
@@ -109,38 +111,49 @@ function renderVirusTotalFile(key, file) {
       : 'Waiting for the latest analysis results';
     card.dataset.state = 'pending';
     setText(`[data-vt-state="${key}"]`, notFound ? 'Not scanned' : 'Pending');
-    setText(`[data-vt-score="${key}"]`, '— / —');
+    setText(`[data-vt-score="${key}"]`, '—');
     setText(`[data-vt-verdict="${key}"]`, message);
-    setText(`[data-vt-malicious="${key}"]`, '—');
-    setText(`[data-vt-suspicious="${key}"]`, '—');
-    setText(`[data-vt-undetected="${key}"]`, '—');
-    const meter = document.querySelector(`[data-vt-meter="${key}"]`);
-    if (meter) meter.style.width = '18%';
-    return { available: false, state: 'pending', flagged: 0, analysisDate: null };
+    setText(`[data-vt-not-flagged="${key}"]`, '—');
+    setText(`[data-vt-flagged="${key}"]`, '—');
+    setText(`[data-vt-no-verdict="${key}"]`, '—');
+    const okMeter = document.querySelector(`[data-vt-meter-ok="${key}"]`);
+    const hitMeter = document.querySelector(`[data-vt-meter-hit="${key}"]`);
+    if (okMeter) okMeter.style.width = '18%';
+    if (hitMeter) hitMeter.style.width = '0';
+    return { available: false, state: 'pending', flagged: 0, notFlagged: 0, noVerdict: 0, analysisDate: null };
   }
 
   const malicious = Number(stats.malicious || 0);
   const suspicious = Number(stats.suspicious || 0);
   const notFlagged = Number(stats.harmless || 0) + Number(stats.undetected || 0);
-  const total = Object.values(stats).reduce((sum, value) => sum + Number(value || 0), 0);
   const flagged = malicious + suspicious;
+  const noVerdict = Number(stats.timeout || 0)
+    + Number(stats['confirmed-timeout'] || 0)
+    + Number(stats.failure || 0)
+    + Number(stats['type-unsupported'] || 0);
   const state = malicious > 0 ? 'danger' : suspicious > 0 ? 'warning' : 'clear';
-  const stateLabel = malicious > 0 ? 'Detected' : suspicious > 0 ? 'Review' : 'No detections';
-  const verdict = flagged === 0
-    ? 'No engines flagged this file'
-    : `${flagged} ${flagged === 1 ? 'engine flagged' : 'engines flagged'} this file`;
+  const stateLabel = `${flagged.toLocaleString()} flagged`;
+  const verdict = `${notFlagged === 1 ? 'engine did' : 'engines did'} not flag this file`;
 
   card.dataset.state = state;
   setText(`[data-vt-state="${key}"]`, stateLabel);
-  setText(`[data-vt-score="${key}"]`, `${flagged} / ${total}`);
+  setText(`[data-vt-score="${key}"]`, notFlagged.toLocaleString());
   setText(`[data-vt-verdict="${key}"]`, verdict);
-  setText(`[data-vt-malicious="${key}"]`, malicious.toLocaleString());
-  setText(`[data-vt-suspicious="${key}"]`, suspicious.toLocaleString());
-  setText(`[data-vt-undetected="${key}"]`, notFlagged.toLocaleString());
-  const meter = document.querySelector(`[data-vt-meter="${key}"]`);
-  if (meter) meter.style.width = '100%';
+  setText(`[data-vt-not-flagged="${key}"]`, notFlagged.toLocaleString());
+  setText(`[data-vt-flagged="${key}"]`, flagged.toLocaleString());
+  setText(`[data-vt-no-verdict="${key}"]`, noVerdict.toLocaleString());
+  const verdictCount = notFlagged + flagged;
+  const okPercent = verdictCount > 0 ? (notFlagged / verdictCount) * 100 : 0;
+  const hitPercent = verdictCount > 0 ? (flagged / verdictCount) * 100 : 0;
+  const okMeter = document.querySelector(`[data-vt-meter-ok="${key}"]`);
+  const hitMeter = document.querySelector(`[data-vt-meter-hit="${key}"]`);
+  if (okMeter) okMeter.style.width = `${okPercent}%`;
+  if (hitMeter) {
+    hitMeter.style.width = `${hitPercent}%`;
+    hitMeter.style.minWidth = flagged > 0 ? '4px' : '0';
+  }
 
-  return { available: true, state, flagged, analysisDate: file.lastAnalysisDate || null };
+  return { available: true, state, flagged, notFlagged, noVerdict, analysisDate: file.lastAnalysisDate || null };
 }
 
 async function hydrateVirusTotal() {
@@ -161,6 +174,7 @@ async function hydrateVirusTotal() {
     const reports = [setup, portable];
     const availableReports = reports.filter((report) => report.available);
     const flagged = availableReports.reduce((sum, report) => sum + report.flagged, 0);
+    const notFlagged = availableReports.reduce((sum, report) => sum + report.notFlagged, 0);
     const hasDanger = reports.some((report) => report.state === 'danger');
     const hasWarning = reports.some((report) => report.state === 'warning');
     const overall = document.querySelector('[data-vt-overall]');
@@ -174,11 +188,7 @@ async function hydrateVirusTotal() {
       if (overall) overall.dataset.state = availableReports.length < 2 && flagged === 0 ? 'pending' : state;
       setText(
         '[data-vt-overall-title]',
-        availableReports.length < 2 && flagged === 0
-          ? '1 of 2 reports is available'
-          : flagged === 0
-            ? 'No detections in either file'
-          : `${flagged} ${flagged === 1 ? 'detection needs' : 'detections need'} review`
+        `${notFlagged.toLocaleString()} not flagged · ${flagged.toLocaleString()} flagged`
       );
       const newestAnalysis = reports
         .map((report) => report.analysisDate)
