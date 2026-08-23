@@ -21,7 +21,7 @@ The download page reads its scan summary from `virustotal-results.json`. To enab
 1. Add a repository Actions secret named `VT_API_KEY` containing your VirusTotal API key.
 2. Open **Actions → Refresh VirusTotal results → Run workflow**.
 
-The key stays inside GitHub Actions. The workflow publishes only file hashes, detection totals, and report dates.
+The key stays inside GitHub Actions. If VirusTotal has not seen a public release file yet, the workflow submits it for analysis and waits for the report. The website receives only file hashes, detection totals, and report dates.
 
 ## License
 

@@ -45,6 +45,19 @@ async function getSha256(asset) {
   return createHash('sha256').update(bytes).digest('hex');
 }
 
+async function downloadAsset(asset, expectedSha256) {
+  const response = await fetch(asset.browser_download_url, {
+    headers: { 'User-Agent': 'LyricsStatus-VirusTotal-Updater' }
+  });
+  if (!response.ok) throw new Error(`Could not download ${asset.name} for VirusTotal submission`);
+  const bytes = Buffer.from(await response.arrayBuffer());
+  const actualSha256 = createHash('sha256').update(bytes).digest('hex');
+  if (actualSha256 !== expectedSha256) {
+    throw new Error(`SHA-256 mismatch while preparing ${asset.name} for submission`);
+  }
+  return bytes;
+}
+
 function normalizeStats(stats = {}) {
   return Object.fromEntries(STAT_KEYS.map((key) => [key, Number(stats[key] || 0)]));
 }
@@ -87,6 +100,57 @@ async function getVirusTotalResult(asset, sha256) {
   };
 }
 
+async function submitMissingFile(asset, sha256) {
+  console.log(`${asset.name} has no VirusTotal report; submitting the public release file.`);
+  const bytes = await downloadAsset(asset, sha256);
+  const uploadUrlResponse = await fetch('https://www.virustotal.com/api/v3/files/upload_url', {
+    headers: { 'x-apikey': VIRUSTOTAL_API_KEY }
+  });
+  if (!uploadUrlResponse.ok) {
+    throw new Error(`Could not obtain a VirusTotal upload URL (${uploadUrlResponse.status})`);
+  }
+
+  const uploadUrl = (await uploadUrlResponse.json())?.data;
+  if (!uploadUrl) throw new Error('VirusTotal did not return an upload URL');
+
+  const form = new FormData();
+  form.append('file', new Blob([bytes], { type: 'application/octet-stream' }), asset.name);
+  const uploadResponse = await fetch(uploadUrl, {
+    method: 'POST',
+    headers: { 'x-apikey': VIRUSTOTAL_API_KEY },
+    body: form
+  });
+  if (!uploadResponse.ok) {
+    throw new Error(`VirusTotal upload failed with ${uploadResponse.status}`);
+  }
+
+  const analysisId = (await uploadResponse.json())?.data?.id;
+  if (!analysisId) throw new Error('VirusTotal did not return an analysis ID');
+
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    await wait(30_000);
+    const analysisResponse = await fetch(`https://www.virustotal.com/api/v3/analyses/${analysisId}`, {
+      headers: {
+        Accept: 'application/json',
+        'x-apikey': VIRUSTOTAL_API_KEY
+      }
+    });
+    if (analysisResponse.status === 429) continue;
+    if (!analysisResponse.ok) {
+      throw new Error(`VirusTotal analysis check failed with ${analysisResponse.status}`);
+    }
+
+    const status = (await analysisResponse.json())?.data?.attributes?.status;
+    if (status === 'completed') {
+      await wait(30_000);
+      const result = await getVirusTotalResult(asset, sha256);
+      if (result.status === 'available') return result;
+    }
+  }
+
+  throw new Error(`VirusTotal did not finish analyzing ${asset.name} in time`);
+}
+
 async function readPreviousResults() {
   try {
     return JSON.parse(await readFile(RESULT_PATH, 'utf8'));
@@ -118,11 +182,14 @@ async function main() {
   for (const [index, [key, pattern]] of entries.entries()) {
     const asset = assets.find((candidate) => pattern.test(candidate.name));
     if (!asset) throw new Error(`Could not find the ${key} executable in ${release.tag_name}`);
-    if (index > 0) await wait(16_000);
+    if (index > 0) await wait(30_000);
 
     const sha256 = await getSha256(asset);
     try {
-      files[key] = await getVirusTotalResult(asset, sha256);
+      const result = await getVirusTotalResult(asset, sha256);
+      files[key] = result.status === 'not_found'
+        ? await submitMissingFile(asset, sha256)
+        : result;
     } catch (error) {
       const cached = previous.files?.[key];
       if (cached?.sha256 === sha256 && cached?.status === 'available') {
