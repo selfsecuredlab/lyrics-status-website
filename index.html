@@ -4,16 +4,58 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#000000">
-  <meta name="description" content="LyricsStatus displays synchronized Spotify lyrics in your Discord custom status.">
-  <meta property="og:title" content="LyricsStatus">
-  <meta property="og:description" content="Your Spotify lyrics, live in your Discord status.">
+  <meta name="description" content="Put synchronized Spotify lyrics in your Discord status with custom layouts, themes, and automatic status restoration.">
+  <meta name="application-name" content="LyricsStatus">
+  <meta name="author" content="selfsecured">
+  <meta name="robots" content="index, follow">
+  <meta property="og:site_name" content="LyricsStatus">
+  <meta property="og:title" content="LyricsStatus — Live Spotify lyrics for Discord">
+  <meta property="og:description" content="Your music, your lyrics, and your Discord presence in sync. Free for Windows.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://selfsecuredlab.github.io/lyrics-status-website/">
-  <title>LyricsStatus — Spotify lyrics in your Discord status</title>
-  <link rel="canonical" href="https://selfsecuredlab.github.io/lyrics-status-website/">
-  <link rel="icon" href="favicon.ico">
+  <meta property="og:url" content="https://selfsecured.me/">
+  <meta property="og:image" content="https://selfsecured.me/social-preview.png">
+  <meta property="og:image:secure_url" content="https://selfsecured.me/social-preview.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="LyricsStatus app icon and the words Spotify lyrics, live in Discord.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LyricsStatus — Live Spotify lyrics for Discord">
+  <meta name="twitter:description" content="Your music, your lyrics, and your Discord presence in sync. Free for Windows.">
+  <meta name="twitter:image" content="https://selfsecured.me/social-preview.png">
+  <meta name="twitter:image:alt" content="LyricsStatus app icon and the words Spotify lyrics, live in Discord.">
+  <title>LyricsStatus — Live Spotify lyrics for Discord</title>
+  <link rel="canonical" href="https://selfsecured.me/">
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="app-icon.png">
+  <link rel="apple-touch-icon" href="app-icon.png">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "LyricsStatus",
+      "description": "Put synchronized Spotify lyrics in your Discord status with custom layouts, themes, and automatic status restoration.",
+      "url": "https://selfsecured.me/",
+      "image": "https://selfsecured.me/social-preview.png",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/latest",
+      "softwareVersion": "1.0.0",
+      "operatingSystem": "Windows 10, Windows 11",
+      "applicationCategory": "MultimediaApplication",
+      "author": {
+        "@type": "Person",
+        "name": "selfsecured",
+        "url": "https://github.com/selfsecuredlab"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  </script>
 </head>
 <body>
   <svg class="svg-sprite" aria-hidden="true">
@@ -191,6 +233,22 @@
             <span><strong>Portable version</strong><small>No installation · <span data-size="portable">68.3 MB</span></small></span>
             <svg class="arrow-icon"><use href="#i-arrow"></use></svg>
           </a>
+          <div class="security-checks">
+            <div class="security-checks-heading">
+              <span><svg><use href="#i-shield"></use></svg> Verify with VirusTotal</span>
+              <small>Exact SHA-256 lookup</small>
+            </div>
+            <div class="security-check-links">
+              <a data-vt="setup" href="https://www.virustotal.com/gui/file/0bcfb718c3744a3491d94d9b576fe6d8ed8f71e4ea6365147cdd0af2f5d5da6c/detection" target="_blank" rel="noreferrer">
+                <span><strong>Installer</strong><small data-hash="setup">0bcfb718…f5d5da6c</small></span>
+                <svg><use href="#i-external"></use></svg>
+              </a>
+              <a data-vt="portable" href="https://www.virustotal.com/gui/file/1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994/detection" target="_blank" rel="noreferrer">
+                <span><strong>Portable</strong><small data-hash="portable">1d0a0c6c…3ed47994</small></span>
+                <svg><use href="#i-external"></use></svg>
+              </a>
+            </div>
+          </div>
           <a class="release-notes" href="https://github.com/selfsecuredlab/lyrics-status/releases/tag/v1.0.0" target="_blank" rel="noreferrer">Release notes and checksums <svg><use href="#i-external"></use></svg></a>
         </div>
       </div>

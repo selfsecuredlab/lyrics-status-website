@@ -1,6 +1,8 @@
 const RELEASE_API = 'https://api.github.com/repos/selfsecuredlab/lyrics-status/releases/latest';
 
 const formatBytes = (bytes) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+const getSha256 = (asset) => String(asset?.digest || '').replace(/^sha256:/i, '');
+const shortenHash = (hash) => `${hash.slice(0, 8)}…${hash.slice(-8)}`;
 
 async function hydrateRelease() {
   try {
@@ -30,6 +32,17 @@ async function hydrateRelease() {
     Object.entries(assetMap).forEach(([key, asset]) => {
       const size = document.querySelector(`[data-size="${key}"]`);
       if (size && asset?.size) size.textContent = formatBytes(asset.size);
+
+      const hash = getSha256(asset);
+      const virusTotalLink = document.querySelector(`[data-vt="${key}"]`);
+      const hashLabel = document.querySelector(`[data-hash="${key}"]`);
+      if (hash && virusTotalLink) {
+        virusTotalLink.href = `https://www.virustotal.com/gui/file/${hash}/detection`;
+      }
+      if (hash && hashLabel) {
+        hashLabel.textContent = shortenHash(hash);
+        hashLabel.title = hash;
+      }
     });
   } catch {
     // Static release links remain available if GitHub's API cannot be reached.
