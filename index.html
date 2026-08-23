@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-theme="oled">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <meta name="description" content="LyricsStatus displays synchronized Spotify lyrics in your Discord custom status.">
+  <meta property="og:title" content="LyricsStatus">
+  <meta property="og:description" content="Your Spotify lyrics, live in your Discord status.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://selfsecuredlab.github.io/lyrics-status-website/">
+  <title>LyricsStatus — Spotify lyrics in your Discord status</title>
+  <link rel="canonical" href="https://selfsecuredlab.github.io/lyrics-status-website/">
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 9l11-2M6 21c1.7 0 3-1.1 3-2.5S7.7 16 6 16s-3 1.1-3 2.5S4.3 21 6 21Zm11-2c1.7 0 3-1.1 3-2.5S18.7 14 17 14s-3 1.1-3 2.5 1.3 2.5 3 2.5Z"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7.4A5.8 5.8 0 0 0 19.3 3 5.4 5.4 0 0 0 19.1.1S17.9-.3 15 1.7a13.4 13.4 0 0 0-6 0C6.1-.3 4.9.1 4.9.1A5.4 5.4 0 0 0 4.7 3a5.8 5.8 0 0 0-1.5 4.1c0 5.8 3.5 7 6.8 7.4A4.8 4.8 0 0 0 9 18v4m0-3c-3 .9-3-1.5-4.2-2"/></symbol>
+    <symbol id="i-windows" viewBox="0 0 24 24"><path d="M3 5.2 10.5 4v7H3V5.2ZM12 3.8 21 2.5V11h-9V3.8ZM3 12.5h7.5v7L3 18.3v-5.8Zm9 0h9V21l-9-1.3v-7.2Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18h1.5a1.5 1.5 0 0 0 0-3H12a2 2 0 0 1 0-4h2a7 7 0 0 0 0-14h-2Z"/><path d="M7.5 10h.01M9.5 6.5h.01M14 6h.01M17 9h.01"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8a7 7 0 0 1 11.7-2L20 8M4 16l2.2 2a7 7 0 0 0 11.7-2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h7"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="LyricsStatus home">
+      <span>LyricsStatus</span>
+      <span class="brand-credit">by selfsecured</span>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#features">Features</a>
+      <a href="#preview">Preview</a>
+      <a href="#download">Download</a>
+    </nav>
+    <a class="header-github" href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noreferrer">
+      <svg><use href="#i-github"></use></svg><span>GitHub</span>
+    </a>
+  </header>
+
+  <main id="top">
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <a class="release-pill" href="https://github.com/selfsecuredlab/lyrics-status/releases/tag/v1.0.0" target="_blank" rel="noreferrer">
+          <span id="release-label">Latest release · v1.0.0</span>
+          <svg><use href="#i-arrow"></use></svg>
+        </a>
+        <h1>Spotify lyrics,<br><span>live in Discord.</span></h1>
+        <p class="hero-lede">LyricsStatus follows the song playing on Spotify and puts each synced line in your Discord custom status.</p>
+        <div class="hero-actions">
+          <a class="button button-primary download-link" data-asset="setup" href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.0.0/LyricsStatus-Setup-1.0.0.exe">
+            <svg><use href="#i-windows"></use></svg>
+            <span>Download for Windows</span>
+          </a>
+          <a class="button button-secondary" href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noreferrer">
+            <svg><use href="#i-github"></use></svg>
+            <span>View source</span>
+          </a>
+        </div>
+        <div class="hero-meta">
+          <span><svg><use href="#i-check"></use></svg> Windows 10/11</span>
+          <span><svg><use href="#i-check"></use></svg> No Spotify API keys</span>
+          <span><svg><use href="#i-check"></use></svg> Open source</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" id="preview">
+        <div class="app-window" aria-label="LyricsStatus application preview">
+          <div class="window-bar">
+            <div class="window-title">LyricsStatus <span>by selfsecured</span></div>
+            <div class="window-actions" aria-hidden="true"><b></b><b></b><b class="window-close"></b></div>
+          </div>
+          <div class="app-layout">
+            <aside class="mock-sidebar">
+              <div class="mock-nav active"><svg><use href="#i-music"></use></svg><span>Lyrics</span></div>
+              <div class="mock-nav"><svg><use href="#i-user"></use></svg><span>Profile</span></div>
+              <div class="mock-nav"><svg><use href="#i-palette"></use></svg><span>Appearance</span></div>
+              <div class="mock-nav"><svg><use href="#i-layers"></use></svg><span>Templates</span></div>
+              <div class="mock-nav"><svg><use href="#i-gear"></use></svg><span>Settings</span></div>
+              <div class="mock-account"><span class="mini-avatar">S</span><span><strong>selfsec</strong><small>Connected</small></span></div>
+            </aside>
+            <div class="mock-main">
+              <div class="mock-topbar"><strong>Lyrics</strong><span class="connected">Connected</span></div>
+              <div class="mock-content">
+                <span class="eyebrow">STATUS FORMAT</span>
+                <div class="format-card">
+                  <strong>Custom Status Layout</strong>
+                  <small>Define how lyrics appear in your Discord status</small>
+                  <div class="chips"><span>lyrics</span><span>song</span><span>artist</span><span>timestamp</span></div>
+                  <div class="mock-input">{lyrics}</div>
+                  <div class="mock-preview"><b>PREVIEW</b><span class="live-lyric">Floating on my lowkey vibe</span></div>
+                </div>
+                <span class="eyebrow presets-label">QUICK PRESETS</span>
+                <div class="preset-row"><span>♡ lyrics ♡</span><span>✦ lyrics ✦</span><span>— lyrics —</span></div>
+              </div>
+            </div>
+            <aside class="profile-preview">
+              <div class="profile-banner"></div>
+              <div class="profile-avatar">S</div>
+              <strong class="profile-name">selfsec</strong>
+              <small>selfsecured</small>
+              <div class="profile-line"></div>
+              <b class="listening-label">LISTENING TO SPOTIFY</b>
+              <div class="now-playing"><div class="album-art"><svg><use href="#i-music"></use></svg></div><span><i>Spotify</i><strong>Sure Thing</strong><small>Miguel</small></span></div>
+              <div class="status-card"><b>NOW PLAYING</b><strong class="live-lyric">Floating on my lowkey vibe</strong><small>•••</small></div>
+            </aside>
+          </div>
+        </div>
+        <div class="visual-caption">Status preview from the desktop app</div>
+      </div>
+    </section>
+
+    <section class="features section-shell" id="features">
+      <div class="section-heading">
+        <span class="eyebrow">FEATURES</span>
+        <h2>What LyricsStatus handles.</h2>
+        <p>The essentials for keeping Spotify playback and your Discord status together.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card feature-wide">
+          <div class="feature-copy">
+            <div class="feature-heading"><div class="feature-icon"><svg><use href="#i-music"></use></svg></div><span class="card-kicker">LIVE LYRICS</span></div>
+            <h3>Lyrics follow playback.</h3>
+            <p>The current synced line updates as the song moves, using Spotify playback from your Discord connection.</p>
+          </div>
+          <div class="lyric-stack" aria-hidden="true"><span>And I can't help but stare</span><strong>Floating on my lowkey vibe</strong><span>Baby, you know that it's rare</span><i></i></div>
+        </article>
+        <article class="feature-card">
+          <div class="feature-heading"><div class="feature-icon"><svg><use href="#i-shield"></use></svg></div><span class="card-kicker">CONNECTION</span></div>
+          <h3>No Spotify API keys.</h3>
+          <p>LyricsStatus uses the Spotify account already linked to your Discord profile.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-heading"><div class="feature-icon"><svg><use href="#i-refresh"></use></svg></div><span class="card-kicker">STATUS RESTORE</span></div>
+          <h3>Keeps your saved status.</h3>
+          <p>When playback stops or the app closes, your saved Discord status is restored automatically.</p>
+        </article>
+        <article class="feature-card feature-wide theme-card">
+          <div class="feature-copy">
+            <div class="feature-heading"><div class="feature-icon"><svg><use href="#i-palette"></use></svg></div><span class="card-kicker">APPEARANCE</span></div>
+            <h3>Four built-in themes.</h3>
+            <p>Try each app theme here. OLED is selected by default.</p>
+          </div>
+          <div class="theme-picker" role="group" aria-label="Preview a theme">
+            <button class="theme-swatch active" data-theme-choice="oled"><i></i><span>OLED</span><small>Pure black</small></button>
+            <button class="theme-swatch" data-theme-choice="obsidian"><i></i><span>Obsidian</span><small>Soft black</small></button>
+            <button class="theme-swatch" data-theme-choice="discord"><i></i><span>Discord</span><small>Familiar gray</small></button>
+            <button class="theme-swatch" data-theme-choice="frost"><i></i><span>Frost</span><small>Deep blue</small></button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="steps section-shell" id="setup">
+      <div class="section-heading">
+        <span class="eyebrow">SETUP</span>
+        <h2>Three short steps.</h2>
+      </div>
+      <div class="step-track">
+        <article class="step"><span>01</span><div><h3>Install LyricsStatus</h3><p>Run the Windows installer or open the portable version.</p></div></article>
+        <article class="step"><span>02</span><div><h3>Connect Discord</h3><p>Sign in through the guided first-launch setup.</p></div></article>
+        <article class="step"><span>03</span><div><h3>Press play</h3><p>Your linked Spotify account and lyrics appear automatically.</p></div></article>
+      </div>
+    </section>
+
+    <section class="download-section section-shell" id="download">
+      <div class="download-panel">
+        <div class="download-copy">
+          <span class="eyebrow">LYRICSSTATUS <span id="download-version">1.0.0</span></span>
+          <h2>Download LyricsStatus for Windows.</h2>
+          <p>Choose the installer for the easiest setup, or keep the portable build anywhere you like.</p>
+          <div class="release-stats"><span><b id="download-count">—</b> downloads</span><span>MIT licensed</span><span>64-bit Windows</span></div>
+        </div>
+        <div class="download-options">
+          <a class="download-card download-link" data-asset="setup" href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.0.0/LyricsStatus-Setup-1.0.0.exe">
+            <span class="download-icon"><svg><use href="#i-download"></use></svg></span>
+            <span><strong>Windows installer</strong><small>Recommended · <span data-size="setup">75.1 MB</span></small></span>
+            <svg class="arrow-icon"><use href="#i-arrow"></use></svg>
+          </a>
+          <a class="download-card download-link" data-asset="portable" href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.0.0/LyricsStatus-Portable-1.0.0.exe">
+            <span class="download-icon secondary"><svg><use href="#i-windows"></use></svg></span>
+            <span><strong>Portable version</strong><small>No installation · <span data-size="portable">68.3 MB</span></small></span>
+            <svg class="arrow-icon"><use href="#i-arrow"></use></svg>
+          </a>
+          <a class="release-notes" href="https://github.com/selfsecuredlab/lyrics-status/releases/tag/v1.0.0" target="_blank" rel="noreferrer">Release notes and checksums <svg><use href="#i-external"></use></svg></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><strong>LyricsStatus</strong><span>Spotify lyrics in your Discord status.</span></div>
+    <div class="footer-links">
+      <a href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noreferrer">Repository</a>
+      <a href="https://github.com/selfsecuredlab/lyrics-status/issues" target="_blank" rel="noreferrer">Issues</a>
+      <a href="https://discord.com/users/752923388955328752" target="_blank" rel="noreferrer">Discord</a>
+      <a href="https://github.com/selfsecuredlab" target="_blank" rel="noreferrer">selfsecuredlab</a>
+    </div>
+    <span class="footer-credit">Built by selfsecured</span>
+  </footer>
+</body>
+</html>
