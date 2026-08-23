@@ -82,6 +82,7 @@
     <nav class="nav-links" aria-label="Main navigation">
       <a href="#features">Features</a>
       <a href="#preview">Preview</a>
+      <a href="#security">Security</a>
       <a href="#download">Download</a>
     </nav>
     <a class="header-github" href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noreferrer">
@@ -214,6 +215,71 @@
       </div>
     </section>
 
+    <section class="security-section section-shell" id="security" aria-labelledby="security-title">
+      <div class="security-section-heading">
+        <div class="section-heading">
+          <span class="eyebrow">SECURITY</span>
+          <h2 id="security-title">Scan results, before you download.</h2>
+          <p>VirusTotal reports matched to the SHA-256 fingerprint of each release file.</p>
+        </div>
+        <div class="security-overall" data-vt-overall data-state="pending" aria-live="polite">
+          <span class="security-overall-icon"><svg><use href="#i-shield"></use></svg></span>
+          <span>
+            <strong data-vt-overall-title>Checking VirusTotal</strong>
+            <small data-vt-updated>Waiting for the latest report</small>
+          </span>
+        </div>
+      </div>
+
+      <div class="scan-grid">
+        <article class="scan-card" data-vt-card="setup" data-state="pending">
+          <div class="scan-card-heading">
+            <span class="scan-file-icon"><svg><use href="#i-download"></use></svg></span>
+            <div><span>INSTALLER</span><h3>Windows installer</h3></div>
+            <span class="scan-state" data-vt-state="setup">Checking</span>
+          </div>
+          <div class="scan-score">
+            <strong data-vt-score="setup">— / —</strong>
+            <span data-vt-verdict="setup">Waiting for analysis results</span>
+          </div>
+          <div class="scan-meter" aria-hidden="true"><i data-vt-meter="setup"></i></div>
+          <dl class="scan-breakdown">
+            <div><dt data-vt-malicious="setup">—</dt><dd>Malicious</dd></div>
+            <div><dt data-vt-suspicious="setup">—</dt><dd>Suspicious</dd></div>
+            <div><dt data-vt-undetected="setup">—</dt><dd>Not flagged</dd></div>
+          </dl>
+          <div class="scan-card-meta">
+            <div><span>SHA-256</span><code data-hash="setup" title="0bcfb718c3744a3491d94d9b576fe6d8ed8f71e4ea6365147cdd0af2f5d5da6c">0bcfb718…f5d5da6c</code></div>
+            <a data-vt="setup" href="https://www.virustotal.com/gui/file/0bcfb718c3744a3491d94d9b576fe6d8ed8f71e4ea6365147cdd0af2f5d5da6c/detection" target="_blank" rel="noreferrer">Full report <svg><use href="#i-external"></use></svg></a>
+          </div>
+        </article>
+
+        <article class="scan-card" data-vt-card="portable" data-state="pending">
+          <div class="scan-card-heading">
+            <span class="scan-file-icon secondary"><svg><use href="#i-windows"></use></svg></span>
+            <div><span>PORTABLE</span><h3>Portable version</h3></div>
+            <span class="scan-state" data-vt-state="portable">Checking</span>
+          </div>
+          <div class="scan-score">
+            <strong data-vt-score="portable">— / —</strong>
+            <span data-vt-verdict="portable">Waiting for analysis results</span>
+          </div>
+          <div class="scan-meter" aria-hidden="true"><i data-vt-meter="portable"></i></div>
+          <dl class="scan-breakdown">
+            <div><dt data-vt-malicious="portable">—</dt><dd>Malicious</dd></div>
+            <div><dt data-vt-suspicious="portable">—</dt><dd>Suspicious</dd></div>
+            <div><dt data-vt-undetected="portable">—</dt><dd>Not flagged</dd></div>
+          </dl>
+          <div class="scan-card-meta">
+            <div><span>SHA-256</span><code data-hash="portable" title="1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994">1d0a0c6c…3ed47994</code></div>
+            <a data-vt="portable" href="https://www.virustotal.com/gui/file/1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994/detection" target="_blank" rel="noreferrer">Full report <svg><use href="#i-external"></use></svg></a>
+          </div>
+        </article>
+      </div>
+
+      <p class="scan-disclaimer"><span data-vt-release>Release v1.0.0</span> · Results can change as security vendors update their analysis. Zero detections does not guarantee a file is safe.</p>
+    </section>
+
     <section class="download-section section-shell" id="download">
       <div class="download-panel">
         <div class="download-copy">
@@ -233,22 +299,6 @@
             <span><strong>Portable version</strong><small>No installation · <span data-size="portable">68.3 MB</span></small></span>
             <svg class="arrow-icon"><use href="#i-arrow"></use></svg>
           </a>
-          <div class="security-checks">
-            <div class="security-checks-heading">
-              <span><svg><use href="#i-shield"></use></svg> Verify with VirusTotal</span>
-              <small>Exact SHA-256 lookup</small>
-            </div>
-            <div class="security-check-links">
-              <a data-vt="setup" href="https://www.virustotal.com/gui/file/0bcfb718c3744a3491d94d9b576fe6d8ed8f71e4ea6365147cdd0af2f5d5da6c/detection" target="_blank" rel="noreferrer">
-                <span><strong>Installer</strong><small data-hash="setup">0bcfb718…f5d5da6c</small></span>
-                <svg><use href="#i-external"></use></svg>
-              </a>
-              <a data-vt="portable" href="https://www.virustotal.com/gui/file/1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994/detection" target="_blank" rel="noreferrer">
-                <span><strong>Portable</strong><small data-hash="portable">1d0a0c6c…3ed47994</small></span>
-                <svg><use href="#i-external"></use></svg>
-              </a>
-            </div>
-          </div>
           <a class="release-notes" href="https://github.com/selfsecuredlab/lyrics-status/releases/tag/v1.0.0" target="_blank" rel="noreferrer">Release notes and checksums <svg><use href="#i-external"></use></svg></a>
         </div>
       </div>

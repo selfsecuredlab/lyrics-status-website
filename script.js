@@ -1,8 +1,23 @@
 const RELEASE_API = 'https://api.github.com/repos/selfsecuredlab/lyrics-status/releases/latest';
+const VIRUSTOTAL_RESULTS_URL = 'https://raw.githubusercontent.com/selfsecuredlab/lyrics-status-website/main/virustotal-results.json';
 
 const formatBytes = (bytes) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 const getSha256 = (asset) => String(asset?.digest || '').replace(/^sha256:/i, '');
 const shortenHash = (hash) => `${hash.slice(0, 8)}…${hash.slice(-8)}`;
+const setText = (selector, value) => {
+  const target = document.querySelector(selector);
+  if (target) target.textContent = value;
+};
+
+const formatAnalysisDate = (value) => {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }).format(date);
+};
 
 async function hydrateRelease() {
   try {
@@ -12,6 +27,7 @@ async function hydrateRelease() {
 
     if (!response.ok) return;
     const release = await response.json();
+    document.documentElement.dataset.latestRelease = release.tag_name || 'v1.0.0';
     const version = String(release.tag_name || 'v1.0.0').replace(/^v/, '');
     const assets = Array.isArray(release.assets) ? release.assets : [];
     const setup = assets.find((asset) => /setup.*\.exe$/i.test(asset.name));
@@ -46,6 +62,134 @@ async function hydrateRelease() {
     });
   } catch {
     // Static release links remain available if GitHub's API cannot be reached.
+  }
+}
+
+function renderPendingVirusTotal(message = 'Waiting for the latest VirusTotal report') {
+  document.querySelectorAll('[data-vt-card]').forEach((card) => {
+    const key = card.dataset.vtCard;
+    card.dataset.state = 'pending';
+    setText(`[data-vt-state="${key}"]`, 'Pending');
+    setText(`[data-vt-score="${key}"]`, '— / —');
+    setText(`[data-vt-verdict="${key}"]`, message);
+    setText(`[data-vt-malicious="${key}"]`, '—');
+    setText(`[data-vt-suspicious="${key}"]`, '—');
+    setText(`[data-vt-undetected="${key}"]`, '—');
+    const meter = document.querySelector(`[data-vt-meter="${key}"]`);
+    if (meter) meter.style.width = '34%';
+  });
+
+  const overall = document.querySelector('[data-vt-overall]');
+  if (overall) overall.dataset.state = 'pending';
+  setText('[data-vt-overall-title]', 'VirusTotal results pending');
+  setText('[data-vt-updated]', message);
+}
+
+function renderVirusTotalFile(key, file) {
+  const card = document.querySelector(`[data-vt-card="${key}"]`);
+  if (!card) return { available: false, state: 'pending', flagged: 0, analysisDate: null };
+
+  const hash = String(file?.sha256 || '');
+  if (hash) {
+    const link = document.querySelector(`[data-vt="${key}"]`);
+    const hashLabel = document.querySelector(`[data-hash="${key}"]`);
+    if (link) link.href = file.reportUrl || `https://www.virustotal.com/gui/file/${hash}/detection`;
+    if (hashLabel) {
+      hashLabel.textContent = shortenHash(hash);
+      hashLabel.title = hash;
+    }
+  }
+
+  const stats = file?.stats;
+  const available = file?.status === 'available' && stats && typeof stats === 'object';
+  if (!available) {
+    const notFound = file?.status === 'not_found';
+    const message = notFound
+      ? 'VirusTotal has not analyzed this exact file yet'
+      : 'Waiting for the latest analysis results';
+    card.dataset.state = 'pending';
+    setText(`[data-vt-state="${key}"]`, notFound ? 'Not scanned' : 'Pending');
+    setText(`[data-vt-score="${key}"]`, '— / —');
+    setText(`[data-vt-verdict="${key}"]`, message);
+    setText(`[data-vt-malicious="${key}"]`, '—');
+    setText(`[data-vt-suspicious="${key}"]`, '—');
+    setText(`[data-vt-undetected="${key}"]`, '—');
+    const meter = document.querySelector(`[data-vt-meter="${key}"]`);
+    if (meter) meter.style.width = '18%';
+    return { available: false, state: 'pending', flagged: 0, analysisDate: null };
+  }
+
+  const malicious = Number(stats.malicious || 0);
+  const suspicious = Number(stats.suspicious || 0);
+  const notFlagged = Number(stats.harmless || 0) + Number(stats.undetected || 0);
+  const total = Object.values(stats).reduce((sum, value) => sum + Number(value || 0), 0);
+  const flagged = malicious + suspicious;
+  const state = malicious > 0 ? 'danger' : suspicious > 0 ? 'warning' : 'clear';
+  const stateLabel = malicious > 0 ? 'Detected' : suspicious > 0 ? 'Review' : 'No detections';
+  const verdict = flagged === 0
+    ? 'No engines flagged this file'
+    : `${flagged} ${flagged === 1 ? 'engine flagged' : 'engines flagged'} this file`;
+
+  card.dataset.state = state;
+  setText(`[data-vt-state="${key}"]`, stateLabel);
+  setText(`[data-vt-score="${key}"]`, `${flagged} / ${total}`);
+  setText(`[data-vt-verdict="${key}"]`, verdict);
+  setText(`[data-vt-malicious="${key}"]`, malicious.toLocaleString());
+  setText(`[data-vt-suspicious="${key}"]`, suspicious.toLocaleString());
+  setText(`[data-vt-undetected="${key}"]`, notFlagged.toLocaleString());
+  const meter = document.querySelector(`[data-vt-meter="${key}"]`);
+  if (meter) meter.style.width = '100%';
+
+  return { available: true, state, flagged, analysisDate: file.lastAnalysisDate || null };
+}
+
+async function hydrateVirusTotal() {
+  try {
+    const response = await fetch(`${VIRUSTOTAL_RESULTS_URL}?v=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`VirusTotal result cache returned ${response.status}`);
+    const results = await response.json();
+    const latestRelease = document.documentElement.dataset.latestRelease;
+
+    if (latestRelease && results.release && latestRelease !== results.release) {
+      renderPendingVirusTotal(`Analysis for ${latestRelease} is still pending`);
+      setText('[data-vt-release]', `Release ${latestRelease}`);
+      return;
+    }
+
+    const setup = renderVirusTotalFile('setup', results.files?.setup);
+    const portable = renderVirusTotalFile('portable', results.files?.portable);
+    const reports = [setup, portable];
+    const availableReports = reports.filter((report) => report.available);
+    const flagged = availableReports.reduce((sum, report) => sum + report.flagged, 0);
+    const hasDanger = reports.some((report) => report.state === 'danger');
+    const hasWarning = reports.some((report) => report.state === 'warning');
+    const overall = document.querySelector('[data-vt-overall]');
+
+    if (availableReports.length === 0) {
+      if (overall) overall.dataset.state = 'pending';
+      setText('[data-vt-overall-title]', 'VirusTotal results pending');
+      setText('[data-vt-updated]', 'Open either full report for the latest details');
+    } else {
+      const state = hasDanger ? 'danger' : hasWarning ? 'warning' : 'clear';
+      if (overall) overall.dataset.state = availableReports.length < 2 && flagged === 0 ? 'pending' : state;
+      setText(
+        '[data-vt-overall-title]',
+        availableReports.length < 2 && flagged === 0
+          ? '1 of 2 reports is available'
+          : flagged === 0
+            ? 'No detections in either file'
+          : `${flagged} ${flagged === 1 ? 'detection needs' : 'detections need'} review`
+      );
+      const newestAnalysis = reports
+        .map((report) => report.analysisDate)
+        .filter(Boolean)
+        .sort((left, right) => new Date(right) - new Date(left))[0];
+      setText('[data-vt-updated]', newestAnalysis ? `Latest analysis · ${formatAnalysisDate(newestAnalysis)}` : 'Cached VirusTotal analysis');
+    }
+
+    setText('[data-vt-release]', `Release ${results.release || latestRelease || 'v1.0.0'}`);
+  } catch {
+    renderPendingVirusTotal('Open the full reports for live details');
   }
 }
 
@@ -99,6 +243,6 @@ function setupLyricPreview() {
   }, 3200);
 }
 
-hydrateRelease();
 setupThemes();
 setupLyricPreview();
+hydrateRelease().finally(hydrateVirusTotal);
