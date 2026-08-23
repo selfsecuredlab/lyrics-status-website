@@ -1,5 +1,5 @@
 const RELEASE_API = 'https://api.github.com/repos/selfsecuredlab/lyrics-status/releases/latest';
-const VIRUSTOTAL_RESULTS_URL = 'https://raw.githubusercontent.com/selfsecuredlab/lyrics-status-website/main/virustotal-results.json';
+const VIRUSTOTAL_RESULTS_URL = 'virustotal-results.json';
 
 const formatBytes = (bytes) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 const getSha256 = (asset) => String(asset?.digest || '').replace(/^sha256:/i, '');
