@@ -1,7 +1,13 @@
 name: Refresh VirusTotal results
+run-name: VirusTotal results · ${{ inputs.release_tag || 'latest release' }}
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Exact LyricsStatus release tag to scan (leave blank for latest)
+        required: false
+        type: string
   schedule:
     - cron: '23 */6 * * *'
   push:
@@ -22,7 +28,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - name: Check out website
         uses: actions/checkout@v4
@@ -30,6 +36,8 @@ jobs:
       - name: Fetch VirusTotal reports
         env:
           VT_API_KEY: ${{ secrets.VT_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
         run: node .github/scripts/update-virustotal-results.mjs
 
       - name: Publish changed results

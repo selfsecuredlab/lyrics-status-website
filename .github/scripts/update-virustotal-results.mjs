@@ -1,9 +1,11 @@
 import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
 
-const RELEASE_API = 'https://api.github.com/repos/selfsecuredlab/lyrics-status/releases/latest';
+const RELEASE_API_ROOT = 'https://api.github.com/repos/selfsecuredlab/lyrics-status/releases';
 const RESULT_PATH = new URL('../../virustotal-results.json', import.meta.url);
 const VIRUSTOTAL_API_KEY = process.env.VT_API_KEY;
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const REQUESTED_RELEASE_TAG = String(process.env.RELEASE_TAG || '').trim();
 const FILES = {
   setup: /setup.*\.exe$/i,
   portable: /portable.*\.exe$/i
@@ -21,16 +23,24 @@ const STAT_KEYS = [
 
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-async function getLatestRelease() {
-  const response = await fetch(RELEASE_API, {
+async function getRelease() {
+  const releaseUrl = REQUESTED_RELEASE_TAG
+    ? `${RELEASE_API_ROOT}/tags/${encodeURIComponent(REQUESTED_RELEASE_TAG)}`
+    : `${RELEASE_API_ROOT}/latest`;
+  const response = await fetch(releaseUrl, {
     headers: {
       Accept: 'application/vnd.github+json',
-      'User-Agent': 'LyricsStatus-VirusTotal-Updater'
+      'User-Agent': 'LyricsStatus-VirusTotal-Updater',
+      ...(GITHUB_TOKEN ? { Authorization: `Bearer ${GITHUB_TOKEN}` } : {})
     }
   });
 
   if (!response.ok) throw new Error(`GitHub release request failed with ${response.status}`);
-  return response.json();
+  const release = await response.json();
+  if (REQUESTED_RELEASE_TAG && release.tag_name !== REQUESTED_RELEASE_TAG) {
+    throw new Error(`GitHub returned ${release.tag_name || 'an unknown tag'} instead of ${REQUESTED_RELEASE_TAG}`);
+  }
+  return release;
 }
 
 async function getSha256(asset) {
@@ -174,7 +184,7 @@ async function main() {
   }
 
   const previous = await readPreviousResults();
-  const release = await getLatestRelease();
+  const release = await getRelease();
   const assets = Array.isArray(release.assets) ? release.assets : [];
   const entries = Object.entries(FILES);
   const files = {};

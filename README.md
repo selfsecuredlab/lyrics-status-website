@@ -23,6 +23,8 @@ The download page reads its scan summary from `virustotal-results.json`. To enab
 
 The key stays inside GitHub Actions. If VirusTotal has not seen a public release file yet, the workflow submits it for analysis and waits for the report. The website receives only file hashes, detection totals, and report dates.
 
+New app releases trigger this workflow automatically with their exact tag. The app repository stores a fine-grained `WEBSITE_ACTIONS_TOKEN` that is limited to running Actions in this repository; the VirusTotal key remains here and is never shared with the app workflow.
+
 ## License
 
 Licensed under the MIT License.
