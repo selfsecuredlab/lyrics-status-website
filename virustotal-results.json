@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "release": "v1.0.0",
-  "updatedAt": "2026-08-25T08:24:40.610Z",
+  "updatedAt": "2026-08-26T08:25:41.249Z",
   "files": {
     "setup": {
       "name": "LyricsStatus-Setup-1.0.0.exe",
@@ -27,15 +27,15 @@
       "sha256": "1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994",
       "reportUrl": "https://www.virustotal.com/gui/file/1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994/detection",
       "status": "available",
-      "lastAnalysisDate": "2026-08-23T04:29:47.000Z",
+      "lastAnalysisDate": "2026-08-26T06:18:37.000Z",
       "stats": {
-        "malicious": 1,
+        "malicious": 2,
         "suspicious": 0,
         "harmless": 0,
-        "undetected": 67,
-        "timeout": 1,
+        "undetected": 63,
+        "timeout": 2,
         "confirmed-timeout": 0,
-        "failure": 0,
+        "failure": 2,
         "type-unsupported": 6
       }
     }
