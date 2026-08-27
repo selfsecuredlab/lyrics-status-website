@@ -1,319 +1,306 @@
-<!doctype html>
-<html lang="en" data-theme="oled">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#000000">
-  <meta name="description" content="Put synchronized Spotify lyrics in your Discord status with custom layouts, themes, and automatic status restoration.">
-  <meta name="application-name" content="LyricsStatus">
-  <meta name="author" content="selfsecured">
-  <meta name="robots" content="index, follow">
-  <meta property="og:site_name" content="LyricsStatus">
-  <meta property="og:title" content="LyricsStatus — Live Spotify lyrics for Discord">
-  <meta property="og:description" content="Your music, your lyrics, and your Discord presence in sync. Free for Windows.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://selfsecured.me/">
-  <meta property="og:image" content="https://selfsecured.me/social-preview.png">
-  <meta property="og:image:secure_url" content="https://selfsecured.me/social-preview.png">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="LyricsStatus app icon and the words Spotify lyrics, live in Discord.">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="LyricsStatus — Live Spotify lyrics for Discord">
-  <meta name="twitter:description" content="Your music, your lyrics, and your Discord presence in sync. Free for Windows.">
-  <meta name="twitter:image" content="https://selfsecured.me/social-preview.png">
-  <meta name="twitter:image:alt" content="LyricsStatus app icon and the words Spotify lyrics, live in Discord.">
-  <title>LyricsStatus — Live Spotify lyrics for Discord</title>
-  <link rel="canonical" href="https://selfsecured.me/">
-  <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" href="app-icon.png">
-  <link rel="apple-touch-icon" href="app-icon.png">
-  <link rel="manifest" href="site.webmanifest">
-  <link rel="stylesheet" href="styles.css">
-  <script src="script.js" defer></script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "LyricsStatus",
-      "description": "Put synchronized Spotify lyrics in your Discord status with custom layouts, themes, and automatic status restoration.",
-      "url": "https://selfsecured.me/",
-      "image": "https://selfsecured.me/social-preview.png",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/latest",
-      "softwareVersion": "1.0.0",
-      "operatingSystem": "Windows 10, Windows 11",
-      "applicationCategory": "MultimediaApplication",
-      "author": {
-        "@type": "Person",
-        "name": "selfsecured",
-        "url": "https://github.com/selfsecuredlab"
-      },
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LyricsStatus</title>
+  <meta name="description" content="LyricsStatus shows the lyrics of the song you're listening to right in your Discord status." />
+  <script>
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
     }
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <svg class="svg-sprite" aria-hidden="true">
-    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 9l11-2M6 21c1.7 0 3-1.1 3-2.5S7.7 16 6 16s-3 1.1-3 2.5S4.3 21 6 21Zm11-2c1.7 0 3-1.1 3-2.5S18.7 14 17 14s-3 1.1-3 2.5 1.3 2.5 3 2.5Z"/></symbol>
-    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/></symbol>
-    <symbol id="i-github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7.4A5.8 5.8 0 0 0 19.3 3 5.4 5.4 0 0 0 19.1.1S17.9-.3 15 1.7a13.4 13.4 0 0 0-6 0C6.1-.3 4.9.1 4.9.1A5.4 5.4 0 0 0 4.7 3a5.8 5.8 0 0 0-1.5 4.1c0 5.8 3.5 7 6.8 7.4A4.8 4.8 0 0 0 9 18v4m0-3c-3 .9-3-1.5-4.2-2"/></symbol>
-    <symbol id="i-windows" viewBox="0 0 24 24"><path d="M3 5.2 10.5 4v7H3V5.2ZM12 3.8 21 2.5V11h-9V3.8ZM3 12.5h7.5v7L3 18.3v-5.8Zm9 0h9V21l-9-1.3v-7.2Z"/></symbol>
-    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
-    <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 10-10 4 4 0 0 1-5 4h-1a3 3 0 0 0-3 3v1a2 2 0 0 1-2 2h1Z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="10" cy="6.5" r="1"/><circle cx="15" cy="6.5" r="1"/><circle cx="18" cy="10" r="1"/></symbol>
-    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></symbol>
-    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8a7 7 0 0 1 11.7-2L20 8M4 16l2.2 2a7 7 0 0 0 11.7-2"/></symbol>
-    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
-    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/></symbol>
-    <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6 1.7 1.7 0 0 0 10 3v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
-    <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6M10 14 21 3M18 13v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h7"/></symbol>
-  </svg>
 
-  <header class="site-header">
-    <a class="brand" href="#top" aria-label="LyricsStatus home">
-      <span>LyricsStatus</span>
-      <span class="brand-credit">by selfsecured</span>
-    </a>
-    <nav class="nav-links" aria-label="Main navigation">
-      <a href="#features">Features</a>
-      <a href="#preview">Preview</a>
-      <a href="#security">Security</a>
-      <a href="#download">Download</a>
-    </nav>
-    <a class="header-github" href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noreferrer">
-      <svg><use href="#i-github"></use></svg><span>GitHub</span>
-    </a>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a href="/" class="brand">Lyrics<span class="brand-accent">Status</span></a>
+
+      <a
+        class="github-btn"
+        href="https://github.com/selfsecuredlab/lyrics-status"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="View LyricsStatus on GitHub"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.304.762-1.604-2.665-.305-5.466-1.332-5.466-5.93 0-1.31.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23a11.51 11.51 0 0 1 3.003-.404c1.018.005 2.043.138 3.003.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.61-2.805 5.621-5.475 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .321.216.696.825.578C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+        </svg>
+        <span>GitHub</span>
+      </a>
+    </div>
   </header>
 
-  <main id="top">
-    <section class="hero section-shell">
-      <div class="hero-copy">
-        <a class="release-pill" href="https://github.com/selfsecuredlab/lyrics-status/releases/tag/v1.0.0" target="_blank" rel="noreferrer">
-          <span id="release-label">Latest release · v1.0.0</span>
-          <svg><use href="#i-arrow"></use></svg>
-        </a>
-        <h1>Spotify lyrics,<br><span>live in Discord.</span></h1>
-        <p class="hero-lede">LyricsStatus follows the song playing on Spotify and puts each synced line in your Discord custom status.</p>
-        <div class="hero-actions">
-          <a class="button button-primary download-link" data-asset="setup" href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.0.0/LyricsStatus-Setup-1.0.0.exe">
-            <svg><use href="#i-windows"></use></svg>
-            <span>Download for Windows</span>
+  <main>
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <a
+            class="badge"
+            href="https://github.com/selfsecuredlab/lyrics-status"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="badge-inner">
+              Now open source on GitHub
+              <span class="badge-arrow">›</span>
+            </span>
           </a>
-          <a class="button button-secondary" href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noreferrer">
-            <svg><use href="#i-github"></use></svg>
-            <span>View source</span>
-          </a>
+
+          <h1 id="heroHeading">
+            <span class="wave-line" data-dir="up">Your lyrics, live</span><br />
+            <em><span class="wave-line" data-dir="down">in your Discord status.</span></em>
+          </h1>
+
+          <p class="hero-sub">
+            LyricsStatus syncs the exact line of whatever you're listening to and
+            shows it right where everyone can see it. No bots, no clutter.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn-primary" id="downloadBtn" type="button">
+              <svg class="win-logo" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801" />
+              </svg>
+              Download
+            </button>
+            <a
+              class="link-arrow"
+              href="https://github.com/selfsecuredlab/lyrics-status"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Source <span>→</span>
+            </a>
+          </div>
         </div>
-        <div class="hero-meta">
-          <span><svg><use href="#i-check"></use></svg> Windows 10/11</span>
-          <span><svg><use href="#i-check"></use></svg> No Spotify API keys</span>
-          <span><svg><use href="#i-check"></use></svg> Open source</span>
+
+        <div class="hero-visual">
+          <div class="hero-preview">
+            <img src="assets/app image.png" alt="LyricsStatus app preview" id="heroPreviewImg" />
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="hero-visual" id="preview">
-        <div class="app-window" aria-label="LyricsStatus application preview">
-          <div class="window-bar">
-            <div class="window-title">LyricsStatus <span>by selfsecured</span></div>
-            <div class="window-actions" aria-hidden="true"><b></b><b></b><b class="window-close"></b></div>
-          </div>
-          <div class="app-layout">
-            <aside class="mock-sidebar">
-              <div class="mock-nav active"><svg><use href="#i-music"></use></svg><span>Lyrics</span></div>
-              <div class="mock-nav"><svg><use href="#i-user"></use></svg><span>Profile</span></div>
-              <div class="mock-nav"><svg><use href="#i-palette"></use></svg><span>Appearance</span></div>
-              <div class="mock-nav"><svg><use href="#i-layers"></use></svg><span>Templates</span></div>
-              <div class="mock-nav"><svg><use href="#i-gear"></use></svg><span>Settings</span></div>
-              <div class="mock-account"><span class="mini-avatar">S</span><span><strong>selfsec</strong><small>Connected</small></span></div>
-            </aside>
-            <div class="mock-main">
-              <div class="mock-topbar"><strong>Lyrics</strong><span class="connected">Connected</span></div>
-              <div class="mock-content">
-                <span class="eyebrow">STATUS FORMAT</span>
-                <div class="format-card">
-                  <strong>Custom Status Layout</strong>
-                  <small>Define how lyrics appear in your Discord status</small>
-                  <div class="chips"><span>lyrics</span><span>song</span><span>artist</span><span>timestamp</span></div>
-                  <div class="mock-input">{lyrics}</div>
-                  <div class="mock-preview"><b>PREVIEW</b><span class="live-lyric">Floating on my lowkey vibe</span></div>
-                </div>
-                <span class="eyebrow presets-label">QUICK PRESETS</span>
-                <div class="preset-row"><span>♡ lyrics ♡</span><span>✦ lyrics ✦</span><span>— lyrics —</span></div>
-              </div>
+    <section class="how-it-works" id="how-it-works">
+      <div class="section-inner">
+        <p class="section-eyebrow">Three short steps.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-icon step-icon--download">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M12 3v12m0 0-4-4m4 4 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </div>
-            <aside class="profile-preview">
-              <div class="profile-banner"></div>
-              <div class="profile-avatar">S</div>
-              <strong class="profile-name">selfsec</strong>
-              <small>selfsecured</small>
-              <div class="profile-line"></div>
-              <b class="listening-label">LISTENING TO SPOTIFY</b>
-              <div class="now-playing"><div class="album-art"><svg><use href="#i-music"></use></svg></div><span><i>Spotify</i><strong>Sure Thing</strong><small>Miguel</small></span></div>
-              <div class="status-card"><b>NOW PLAYING</b><strong class="live-lyric">Floating on my lowkey vibe</strong><small>•••</small></div>
-            </aside>
+            <span class="step-number">01</span>
+            <h3>Install LyricsStatus</h3>
+            <p>Run the Windows installer or open the portable version.</p>
+          </div>
+          <div class="step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+              <path d="M4 12h15m0 0-5-5m5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="step">
+            <div class="step-icon step-icon--discord">
+              <svg viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+              </svg>
+            </div>
+            <span class="step-number">02</span>
+            <h3>Connect Discord</h3>
+            <p>Sign in through the guided first-launch setup.</p>
+          </div>
+          <div class="step-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+              <path d="M4 12h15m0 0-5-5m5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="step">
+            <div class="step-icon step-icon--spotify">
+              <svg viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+              </svg>
+            </div>
+            <span class="step-number">03</span>
+            <h3>Press play</h3>
+            <p>Your linked Spotify account and lyrics appear automatically.</p>
           </div>
         </div>
-        <div class="visual-caption">Status preview from the desktop app</div>
       </div>
     </section>
 
-    <section class="features section-shell" id="features">
-      <div class="section-heading">
-        <span class="eyebrow">FEATURES</span>
-        <h2>What LyricsStatus handles.</h2>
-        <p>The essentials for keeping Spotify playback and your Discord status together.</p>
-      </div>
-      <div class="feature-grid">
-        <article class="feature-card feature-wide">
-          <div class="feature-copy">
-            <div class="feature-heading"><div class="feature-icon"><svg><use href="#i-music"></use></svg></div><span class="card-kicker">LIVE LYRICS</span></div>
-            <h3>Lyrics follow playback.</h3>
-            <p>The current synced line updates as the song moves, using Spotify playback from your Discord connection.</p>
-          </div>
-          <div class="lyric-stack" aria-hidden="true"><span>And I can't help but stare</span><strong>Floating on my lowkey vibe</strong><span>Baby, you know that it's rare</span><i></i></div>
-        </article>
-        <article class="feature-card">
-          <div class="feature-heading"><div class="feature-icon"><svg><use href="#i-shield"></use></svg></div><span class="card-kicker">CONNECTION</span></div>
-          <h3>No Spotify API keys.</h3>
-          <p>LyricsStatus uses the Spotify account already linked to your Discord profile.</p>
-        </article>
-        <article class="feature-card">
-          <div class="feature-heading"><div class="feature-icon"><svg><use href="#i-refresh"></use></svg></div><span class="card-kicker">STATUS RESTORE</span></div>
-          <h3>Keeps your saved status.</h3>
-          <p>When playback stops or the app closes, your saved Discord status is restored automatically.</p>
-        </article>
-        <article class="feature-card feature-wide theme-card">
-          <div class="feature-copy">
-            <div class="feature-heading"><div class="feature-icon"><svg><use href="#i-palette"></use></svg></div><span class="card-kicker">APPEARANCE</span></div>
-            <h3>Four built-in themes.</h3>
-            <p>Try each app theme here. OLED is selected by default.</p>
-          </div>
-          <div class="theme-picker" role="group" aria-label="Preview a theme">
-            <button class="theme-swatch active" data-theme-choice="oled"><i></i><span>OLED</span><small>Pure black</small></button>
-            <button class="theme-swatch" data-theme-choice="obsidian"><i></i><span>Obsidian</span><small>Soft black</small></button>
-            <button class="theme-swatch" data-theme-choice="discord"><i></i><span>Discord</span><small>Familiar gray</small></button>
-            <button class="theme-swatch" data-theme-choice="frost"><i></i><span>Frost</span><small>Deep blue</small></button>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="steps section-shell" id="setup">
-      <div class="section-heading">
-        <span class="eyebrow">SETUP</span>
-        <h2>Three short steps.</h2>
-      </div>
-      <div class="step-track">
-        <article class="step"><span>01</span><div><h3>Install LyricsStatus</h3><p>Run the Windows installer or open the portable version.</p></div></article>
-        <article class="step"><span>02</span><div><h3>Connect Discord</h3><p>Sign in through the guided first-launch setup.</p></div></article>
-        <article class="step"><span>03</span><div><h3>Press play</h3><p>Your linked Spotify account and lyrics appear automatically.</p></div></article>
-      </div>
-    </section>
-
-    <section class="security-section section-shell" id="security" aria-labelledby="security-title">
-      <div class="security-section-heading">
-        <div class="section-heading">
-          <span class="eyebrow">SECURITY</span>
-          <h2 id="security-title">Scan results, before you download.</h2>
-          <p>VirusTotal reports matched to the SHA-256 fingerprint of each release file.</p>
+    <section class="source-section">
+      <div class="section-inner source-grid">
+        <div class="source-copy">
+          <p class="section-eyebrow">For developers</p>
+          <h2>Build it from source</h2>
+          <p>Clone the repo and run it locally with Node.js 20 or newer.</p>
         </div>
-        <div class="security-overall" data-vt-overall data-state="pending" aria-live="polite">
-          <span class="security-overall-icon"><svg><use href="#i-shield"></use></svg></span>
-          <span>
-            <strong data-vt-overall-title>Checking VirusTotal</strong>
-            <small data-vt-updated>Waiting for the latest report</small>
-          </span>
-        </div>
-      </div>
 
-      <div class="scan-grid">
-        <article class="scan-card" data-vt-card="setup" data-state="pending">
-          <div class="scan-card-heading">
-            <span class="scan-file-icon"><svg><use href="#i-download"></use></svg></span>
-            <div><span>INSTALLER</span><h3>Windows installer</h3></div>
-            <span class="scan-state" data-vt-state="setup">Checking</span>
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-dot"></span>
+            <span class="code-dot"></span>
+            <span class="code-dot"></span>
+            <button class="copy-btn" id="copyBtn" type="button">Copy</button>
           </div>
-          <div class="scan-score">
-            <strong data-vt-score="setup">—</strong>
-            <span data-vt-verdict="setup">engines did not flag this file</span>
-          </div>
-          <div class="scan-meter" aria-hidden="true"><span class="scan-meter-ok" data-vt-meter-ok="setup"></span><span class="scan-meter-hit" data-vt-meter-hit="setup"></span></div>
-          <dl class="scan-breakdown">
-            <div><dt data-vt-not-flagged="setup">—</dt><dd>Not flagged</dd></div>
-            <div><dt data-vt-flagged="setup">—</dt><dd>Flagged</dd></div>
-            <div><dt data-vt-no-verdict="setup">—</dt><dd>No verdict</dd></div>
-          </dl>
-          <div class="scan-card-meta">
-            <div><span>SHA-256</span><code data-hash="setup" title="0bcfb718c3744a3491d94d9b576fe6d8ed8f71e4ea6365147cdd0af2f5d5da6c">0bcfb718…f5d5da6c</code></div>
-            <a data-vt="setup" href="https://www.virustotal.com/gui/file/0bcfb718c3744a3491d94d9b576fe6d8ed8f71e4ea6365147cdd0af2f5d5da6c/detection" target="_blank" rel="noreferrer">Full report <svg><use href="#i-external"></use></svg></a>
-          </div>
-        </article>
-
-        <article class="scan-card" data-vt-card="portable" data-state="pending">
-          <div class="scan-card-heading">
-            <span class="scan-file-icon secondary"><svg><use href="#i-windows"></use></svg></span>
-            <div><span>PORTABLE</span><h3>Portable version</h3></div>
-            <span class="scan-state" data-vt-state="portable">Checking</span>
-          </div>
-          <div class="scan-score">
-            <strong data-vt-score="portable">—</strong>
-            <span data-vt-verdict="portable">engines did not flag this file</span>
-          </div>
-          <div class="scan-meter" aria-hidden="true"><span class="scan-meter-ok" data-vt-meter-ok="portable"></span><span class="scan-meter-hit" data-vt-meter-hit="portable"></span></div>
-          <dl class="scan-breakdown">
-            <div><dt data-vt-not-flagged="portable">—</dt><dd>Not flagged</dd></div>
-            <div><dt data-vt-flagged="portable">—</dt><dd>Flagged</dd></div>
-            <div><dt data-vt-no-verdict="portable">—</dt><dd>No verdict</dd></div>
-          </dl>
-          <div class="scan-card-meta">
-            <div><span>SHA-256</span><code data-hash="portable" title="1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994">1d0a0c6c…3ed47994</code></div>
-            <a data-vt="portable" href="https://www.virustotal.com/gui/file/1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994/detection" target="_blank" rel="noreferrer">Full report <svg><use href="#i-external"></use></svg></a>
-          </div>
-        </article>
-      </div>
-
-      <p class="scan-disclaimer"><span data-vt-release>Release v1.0.0</span> · No verdict means an engine timed out, failed, or did not support the file. Results can change over time.</p>
-    </section>
-
-    <section class="download-section section-shell" id="download">
-      <div class="download-panel">
-        <div class="download-copy">
-          <span class="eyebrow">LYRICSSTATUS <span id="download-version">1.0.0</span></span>
-          <h2>Download LyricsStatus for Windows.</h2>
-          <p>Choose the installer for the easiest setup, or keep the portable build anywhere you like.</p>
-          <div class="release-stats"><span><b id="download-count">—</b> downloads</span><span>MIT licensed</span><span>64-bit Windows</span></div>
-        </div>
-        <div class="download-options">
-          <a class="download-card download-link" data-asset="setup" href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.0.0/LyricsStatus-Setup-1.0.0.exe">
-            <span class="download-icon"><svg><use href="#i-download"></use></svg></span>
-            <span><strong>Windows installer</strong><small>Recommended · <span data-size="setup">75.1 MB</span></small></span>
-            <svg class="arrow-icon"><use href="#i-arrow"></use></svg>
-          </a>
-          <a class="download-card download-link" data-asset="portable" href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.0.0/LyricsStatus-Portable-1.0.0.exe">
-            <span class="download-icon secondary"><svg><use href="#i-windows"></use></svg></span>
-            <span><strong>Portable version</strong><small>No installation · <span data-size="portable">68.3 MB</span></small></span>
-            <svg class="arrow-icon"><use href="#i-arrow"></use></svg>
-          </a>
-          <a class="release-notes" href="https://github.com/selfsecuredlab/lyrics-status/releases/tag/v1.0.0" target="_blank" rel="noreferrer">Release notes and checksums <svg><use href="#i-external"></use></svg></a>
+          <pre><code id="codeSnippet">git clone https://github.com/selfsecuredlab/lyrics-status.git
+cd lyrics-status
+npm ci
+npm start</code></pre>
         </div>
       </div>
     </section>
+
+    <section class="lang-section">
+      <div class="section-inner">
+        <p class="section-eyebrow">Built with</p>
+
+        <div class="lang-bar">
+          <span data-lang="typescript" style="width: 79.8%; background: #3178c6; --seg-color: #3178c6"></span>
+          <span data-lang="javascript" style="width: 12.2%; background: #f7df1e; --seg-color: #f7df1e"></span>
+          <span data-lang="html" style="width: 4.1%; background: #e34f26; --seg-color: #e34f26"></span>
+          <span data-lang="css" style="width: 3.6%; background: #663399; --seg-color: #9370db"></span>
+          <span data-lang="powershell" style="width: 0.3%; background: #012456; --seg-color: #4d9fe8"></span>
+        </div>
+
+        <ul class="lang-list">
+          <li>
+            <a href="https://github.com/selfsecuredlab/lyrics-status/search?l=typescript" target="_blank" rel="noopener noreferrer" data-lang="typescript">
+              <svg class="lang-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path fill="#3178C6" d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/>
+              </svg>
+              TypeScript <b>79.8%</b>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/selfsecuredlab/lyrics-status/search?l=javascript" target="_blank" rel="noopener noreferrer" data-lang="javascript">
+              <svg class="lang-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path fill="#F7DF1E" d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/>
+              </svg>
+              JavaScript <b>12.2%</b>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/selfsecuredlab/lyrics-status/search?l=html" target="_blank" rel="noopener noreferrer" data-lang="html">
+              <svg class="lang-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path fill="#E34F26" d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z"/>
+              </svg>
+              HTML <b>4.1%</b>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/selfsecuredlab/lyrics-status/search?l=css" target="_blank" rel="noopener noreferrer" data-lang="css">
+              <svg class="lang-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <path fill="#663399" d="M0 0v20.16A3.84 3.84 0 0 0 3.84 24h16.32A3.84 3.84 0 0 0 24 20.16V3.84A3.84 3.84 0 0 0 20.16 0Zm14.256 13.08c1.56 0 2.28 1.08 2.304 2.64h-1.608c.024-.288-.048-.6-.144-.84-.096-.192-.288-.264-.552-.264-.456 0-.696.264-.696.84-.024.576.288.888.768 1.08.72.288 1.608.744 1.92 1.296q.432.648.432 1.656c0 1.608-.912 2.592-2.496 2.592-1.656 0-2.4-1.032-2.424-2.688h1.68c0 .792.264 1.176.792 1.176.264 0 .456-.072.552-.24.192-.312.24-1.176-.048-1.512-.312-.408-.912-.6-1.32-.816q-.828-.396-1.224-.936c-.24-.36-.36-.888-.36-1.536 0-1.44.936-2.472 2.424-2.448m5.4 0c1.584 0 2.304 1.08 2.328 2.64h-1.608c0-.288-.048-.6-.168-.84-.096-.192-.264-.264-.528-.264-.48 0-.72.264-.72.84s.288.888.792 1.08c.696.288 1.608.744 1.92 1.296.264.432.408.984.408 1.656.024 1.608-.888 2.592-2.472 2.592-1.68 0-2.424-1.056-2.448-2.688h1.68c0 .744.264 1.176.792 1.176.264 0 .456-.072.552-.24.216-.312.264-1.176-.048-1.512-.288-.408-.888-.6-1.32-.816-.552-.264-.96-.576-1.2-.936s-.36-.888-.36-1.536c-.024-1.44.912-2.472 2.4-2.448m-11.031.018c.711-.006 1.419.198 1.839.63.432.432.672 1.128.648 1.992H9.336c.024-.456-.096-.792-.432-.96-.312-.144-.768-.048-.888.24-.12.264-.192.576-.168.864v3.504c0 .744.264 1.128.768 1.128a.65.65 0 0 0 .552-.264c.168-.24.192-.552.168-.84h1.776c.096 1.632-.984 2.712-2.568 2.688-1.536 0-2.496-.864-2.472-2.472v-4.032c0-.816.24-1.44.696-1.848.432-.408 1.146-.624 1.857-.63"/>
+              </svg>
+              CSS <b>3.6%</b>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/selfsecuredlab/lyrics-status/search?l=powershell" target="_blank" rel="noopener noreferrer" data-lang="powershell">
+              <svg class="lang-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <rect width="24" height="24" rx="5" fill="#012456"/>
+                <path d="M5.5 7l5 5-5 5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <line x1="11.5" y1="17" x2="19" y2="17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              PowerShell <b>0.3%</b>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="footer-row">
+        <span>
+          Website made with <span class="heart">❤️</span> by
+          <svg class="footer-discord" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+          </svg>
+          @selfloved
+        </span>
+        <a href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </footer>
   </main>
 
-  <footer>
-    <div class="footer-brand"><strong>LyricsStatus</strong><span>Spotify lyrics in your Discord status.</span></div>
-    <div class="footer-links">
-      <a href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noreferrer">Repository</a>
-      <a href="https://github.com/selfsecuredlab/lyrics-status/issues" target="_blank" rel="noreferrer">Issues</a>
-      <a href="https://discord.com/users/752923388955328752" target="_blank" rel="noreferrer">Discord</a>
-      <a href="https://github.com/selfsecuredlab" target="_blank" rel="noreferrer">selfsecuredlab</a>
+  <div class="lightbox" id="lightbox">
+    <img src="" alt="LyricsStatus app preview enlarged" id="lightboxImg" />
+  </div>
+
+  <div class="modal" id="downloadModal">
+    <div class="modal-panel">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">×</button>
+
+      <div class="modal-header">
+        <svg class="win-logo win-logo-lg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801" />
+        </svg>
+        <div>
+          <h3>Download LyricsStatus</h3>
+          <p>Pick a version below. Both builds are scanned clean on VirusTotal.</p>
+        </div>
+      </div>
+
+      <div class="download-options">
+        <div class="download-option">
+          <div class="download-option-info">
+            <span class="download-option-title">Windows Installer</span>
+            <span class="download-option-desc">Recommended. Installs LyricsStatus and adds a shortcut</span>
+          </div>
+          <a
+            class="btn-download"
+            href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.0.0/LyricsStatus-Setup-1.0.0.exe"
+          >Download</a>
+          <a
+            class="vt-badge"
+            href="https://www.virustotal.com/gui/file/0bcfb718c3744a3491d94d9b576fe6d8ed8f71e4ea6365147cdd0af2f5d5da6c/detection"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg class="vt-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 564.3 109" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="m158.6 78.7-17.1-48.6h8.9c10.5 30.5 11.9 34.8 13 38.6 1-3.5 2.6-8.2 13.5-38.6h8.9l-17.9 48.6h-9.3zM194.2 78.7V30.2h8.3v48.5zM299.6 58.3c0 6.6-.6 10.8-2.4 13.9-2.8 4.9-8.7 7.6-17.3 7.6-8.1 0-14.1-2.4-16.9-7.8-1.7-3.1-2.3-7.7-2.3-13.2V30.2h8.3v28.4c0 4 .3 6.8 1 8.6 1.2 3.1 4.2 5.5 10.3 5.5 5.3 0 8.5-1.8 10.1-5.1.8-1.7 1.6-4.9 1.6-8.9V30.2h7.6v28.1zM310.1 69.4c3.7 1.7 8.5 3.3 14.1 3.3 6.6 0 10-2.4 10-6.7 0-3.3-1.2-5.1-7.6-7.3l-6.8-2.3c-7.1-2.4-10.4-6.6-10.4-13.5 0-7.4 5.8-13.9 18.3-13.9 4.9 0 9.7.8 13.6 2.2l-1.8 6.9c-4-1.3-8.8-2.2-12.8-2.2-6.7 0-8.6 3.5-8.6 6.4 0 2.9.9 4.9 6.5 6.7l6.8 2.4c8.3 2.8 11.2 7.2 11.2 13.5 0 7.7-5.3 14.6-18.4 14.6-6.1 0-12-1.4-16.2-3.4l2.1-6.7zM365.5 78.7V37.8H351v-7.6h37.4v7.6h-14.5v40.9zM452.2 78.7V37.8h-14.5v-7.6h37.4v7.6h-14.5v40.9zM412 79.7c-14.1 0-23-11.8-23-25.8 0-15.4 9-24.8 24.2-24.8 14.6 0 22.2 11.3 22.3 24.8.1 13.9-8.7 25.8-23.5 25.8zm.6-43.6c-9.6 0-14.8 6-14.8 17.9 0 14.5 6.3 18.7 14.6 18.7 8.6 0 14.4-5.3 14.4-18.3.2-11.5-3.1-18.3-14.2-18.3zM473.4 78.7l18.7-48.6h9.6l18.2 48.6H511L506.1 66h-18.9l-5 12.8h-8.8zm30.5-19.8c-4.5-12.5-6-16.5-7-19.9-1.1 3.3-2.4 7.1-7.4 19.9h14.4zM527.9 78.7V30.2h9v41.2l24.2-.3.1 7.6zM0 5.9l48.7 48.6L0 103h107.5V5.9H0zm97.1 86.7H24.5l38.4-38.1-38.4-38.2h72.6v76.3zM240.8 57.7c7.2-2.4 10-7.5 10-13.7 0-6.7-3.5-10.9-8.6-12.5-3-.9-7.3-1.3-11.5-1.3h-15v48.6h8.3V58.9l2.8-.2c3.7 0 5.5.4 6.3.3L244 78.7h9.2l-12.4-21zm-2.2-6.6c-2 1.1-4.9 1.4-8.4 1.4H224V37.1h6.3c3.3 0 5.8.1 7.7.8 2.6 1 4 3.3 4 6.6-.1 3-1.2 5.4-3.4 6.6z" />
+            </svg>
+            <span><strong>65/67</strong> engines flagged this clean</span>
+          </a>
+        </div>
+
+        <div class="download-option">
+          <div class="download-option-info">
+            <span class="download-option-title">Portable</span>
+            <span class="download-option-desc">No install. Just run the .exe</span>
+          </div>
+          <a
+            class="btn-download"
+            href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.0.0/LyricsStatus-Portable-1.0.0.exe"
+          >Download</a>
+          <a
+            class="vt-badge"
+            href="https://www.virustotal.com/gui/file/1d0a0c6c7eced0303c2a196f7c19f5aadd52e5f7a69dd9635c066e3e3ed47994/detection"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg class="vt-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 564.3 109" fill="currentColor" aria-hidden="true" focusable="false">
+              <path d="m158.6 78.7-17.1-48.6h8.9c10.5 30.5 11.9 34.8 13 38.6 1-3.5 2.6-8.2 13.5-38.6h8.9l-17.9 48.6h-9.3zM194.2 78.7V30.2h8.3v48.5zM299.6 58.3c0 6.6-.6 10.8-2.4 13.9-2.8 4.9-8.7 7.6-17.3 7.6-8.1 0-14.1-2.4-16.9-7.8-1.7-3.1-2.3-7.7-2.3-13.2V30.2h8.3v28.4c0 4 .3 6.8 1 8.6 1.2 3.1 4.2 5.5 10.3 5.5 5.3 0 8.5-1.8 10.1-5.1.8-1.7 1.6-4.9 1.6-8.9V30.2h7.6v28.1zM310.1 69.4c3.7 1.7 8.5 3.3 14.1 3.3 6.6 0 10-2.4 10-6.7 0-3.3-1.2-5.1-7.6-7.3l-6.8-2.3c-7.1-2.4-10.4-6.6-10.4-13.5 0-7.4 5.8-13.9 18.3-13.9 4.9 0 9.7.8 13.6 2.2l-1.8 6.9c-4-1.3-8.8-2.2-12.8-2.2-6.7 0-8.6 3.5-8.6 6.4 0 2.9.9 4.9 6.5 6.7l6.8 2.4c8.3 2.8 11.2 7.2 11.2 13.5 0 7.7-5.3 14.6-18.4 14.6-6.1 0-12-1.4-16.2-3.4l2.1-6.7zM365.5 78.7V37.8H351v-7.6h37.4v7.6h-14.5v40.9zM452.2 78.7V37.8h-14.5v-7.6h37.4v7.6h-14.5v40.9zM412 79.7c-14.1 0-23-11.8-23-25.8 0-15.4 9-24.8 24.2-24.8 14.6 0 22.2 11.3 22.3 24.8.1 13.9-8.7 25.8-23.5 25.8zm.6-43.6c-9.6 0-14.8 6-14.8 17.9 0 14.5 6.3 18.7 14.6 18.7 8.6 0 14.4-5.3 14.4-18.3.2-11.5-3.1-18.3-14.2-18.3zM473.4 78.7l18.7-48.6h9.6l18.2 48.6H511L506.1 66h-18.9l-5 12.8h-8.8zm30.5-19.8c-4.5-12.5-6-16.5-7-19.9-1.1 3.3-2.4 7.1-7.4 19.9h14.4zM527.9 78.7V30.2h9v41.2l24.2-.3.1 7.6zM0 5.9l48.7 48.6L0 103h107.5V5.9H0zm97.1 86.7H24.5l38.4-38.1-38.4-38.2h72.6v76.3zM240.8 57.7c7.2-2.4 10-7.5 10-13.7 0-6.7-3.5-10.9-8.6-12.5-3-.9-7.3-1.3-11.5-1.3h-15v48.6h8.3V58.9l2.8-.2c3.7 0 5.5.4 6.3.3L244 78.7h9.2l-12.4-21zm-2.2-6.6c-2 1.1-4.9 1.4-8.4 1.4H224V37.1h6.3c3.3 0 5.8.1 7.7.8 2.6 1 4 3.3 4 6.6-.1 3-1.2 5.4-3.4 6.6z" />
+            </svg>
+            <span><strong>63/75</strong> engines flagged this clean</span>
+          </a>
+        </div>
+      </div>
     </div>
-    <span class="footer-credit">Built by selfsecured</span>
-  </footer>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
