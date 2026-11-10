@@ -3,135 +3,183 @@ if ("scrollRestoration" in history) {
 }
 window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
+/* ---------- Header: blur + line once you scroll ---------- */
 const header = document.getElementById("siteHeader");
-const SCROLL_THRESHOLD = 40;
-
 function updateHeader() {
-  header.classList.toggle("scrolled", window.scrollY > SCROLL_THRESHOLD);
+  header.classList.toggle("scrolled", window.scrollY > 24);
 }
-
 updateHeader();
 window.addEventListener("scroll", updateHeader, { passive: true });
 
-const previewImg = document.getElementById("heroPreviewImg");
-const lightbox = document.getElementById("lightbox");
-const lightboxImg = document.getElementById("lightboxImg");
-
-function openLightbox() {
-  lightboxImg.src = previewImg.src;
-  lightbox.classList.add("active");
-  document.body.style.overflow = "hidden";
-}
-
-function closeLightbox() {
-  lightbox.classList.remove("active");
-  document.body.style.overflow = "";
-}
-
-previewImg.addEventListener("click", openLightbox);
-lightbox.addEventListener("click", closeLightbox);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeLightbox();
-    closeDownloadModal();
-  }
-});
-
-const downloadBtn = document.getElementById("downloadBtn");
-const downloadModal = document.getElementById("downloadModal");
-const modalClose = document.getElementById("modalClose");
-
-function openDownloadModal() {
-  downloadModal.classList.add("active");
-  document.body.style.overflow = "hidden";
-}
-
-function closeDownloadModal() {
-  downloadModal.classList.remove("active");
-  document.body.style.overflow = "";
-}
-
-downloadBtn.addEventListener("click", openDownloadModal);
-modalClose.addEventListener("click", closeDownloadModal);
-downloadModal.addEventListener("click", (e) => {
-  if (e.target === downloadModal) closeDownloadModal();
-});
-
+/* ---------- Headline letter wave ---------- */
 function waveify(root) {
+  let i = 0;
   root.querySelectorAll(".wave-line").forEach((line) => {
-    const text = line.textContent;
-    const dir = line.dataset.dir === "down" ? "letter-down" : "letter-up";
-    const words = text.split(" ");
+    const text = line.textContent.trim();
+    const dir = line.dataset.dir === "down" ? "letter letter-down" : "letter";
+    line.setAttribute("aria-label", text);
     line.textContent = "";
-    let i = 0;
-    words.forEach((word, wordIndex) => {
+    text.split(" ").forEach((word, wordIndex, words) => {
       const wordSpan = document.createElement("span");
       wordSpan.className = "wave-word";
+      wordSpan.setAttribute("aria-hidden", "true");
       for (const ch of word) {
         const span = document.createElement("span");
-        span.className = `letter ${dir}`;
-        span.style.setProperty("--i", i);
+        span.className = dir;
+        span.style.setProperty("--i", i++);
         span.textContent = ch;
         wordSpan.appendChild(span);
-        i++;
       }
       line.appendChild(wordSpan);
-      if (wordIndex < words.length - 1) {
-        line.appendChild(document.createTextNode(" "));
-      }
+      if (wordIndex < words.length - 1) line.appendChild(document.createTextNode(" "));
     });
   });
 }
-
 waveify(document.getElementById("heroHeading"));
 
-const glow = document.querySelector(".bg-glow");
+/* ---------- Glow dots ---------- */
+const GLOW_DOTS = [
+  { s: 1.7, l: 77, t: 31, d: 3.0 },
+  { s: 3.2, l: 40, t: 57, d: 0.9 },
+  { s: 2.8, l: 33, t: 44, d: 3.2 },
+  { s: 3.0, l: 78, t: 69, d: 2.5 },
+  { s: 1.7, l: 48, t: 58, d: 3.0 },
+  { s: 2.1, l: 52, t: 55, d: 1.3 },
+  { s: 2.4, l: 22, t: 36, d: 1.9 },
+  { s: 2.0, l: 64, t: 24, d: 0.4 },
+];
+const glow = document.getElementById("glowStage");
 if (glow) {
-  for (let i = 0; i < 6; i++) {
+  GLOW_DOTS.forEach(({ s, l, t, d }) => {
     const dot = document.createElement("span");
     dot.className = "glow-dot";
-    const size = 1.5 + Math.random() * 2;
-    dot.style.width = `${size}px`;
-    dot.style.height = `${size}px`;
-    dot.style.left = `${15 + Math.random() * 70}%`;
-    dot.style.top = `${20 + Math.random() * 55}%`;
-    dot.style.animationDelay = `${Math.random() * 3.5}s`;
+    dot.style.width = `${s}px`;
+    dot.style.height = `${s}px`;
+    dot.style.left = `${l}%`;
+    dot.style.top = `${t}%`;
+    dot.style.animationDelay = `${d}s`;
     glow.appendChild(dot);
-  }
+  });
 }
 
-[".how-it-works", ".source-section", ".lang-section", ".site-footer"].forEach((selector) => {
-  const section = document.querySelector(selector);
-  if (!section) return;
+/* ---------- Terminal lines ---------- */
+const CODE_LINES = [
+  "git clone https://github.com/selfsecuredlab/lyrics-status.git",
+  "cd lyrics-status",
+  "npm ci",
+  "npm start",
+];
+const codeSnippet = document.getElementById("codeSnippet");
+if (codeSnippet) {
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+  CODE_LINES.forEach((line, i) => {
+    const row = el("span", "code-line");
+    const num = el("span", "code-num", String(i + 1));
+    num.setAttribute("aria-hidden", "true");
+    const prompt = el("span", "code-prompt", "$");
+    prompt.setAttribute("aria-hidden", "true");
+    const cmdWrap = el("span", "type-line");
+    cmdWrap.style.setProperty("--d", `${400 + i * 700}ms`);
+    const [cmd, ...args] = line.split(" ");
+    cmdWrap.appendChild(el("span", "code-cmd", cmd));
+    args.forEach((a) => {
+      cmdWrap.appendChild(document.createTextNode(" "));
+      cmdWrap.appendChild(el("span", a.startsWith("http") ? "code-url" : "code-arg", a));
+    });
+    row.append(num, prompt, cmdWrap);
+    codeSnippet.appendChild(row);
+  });
+}
+
+/* ---------- Copy button ---------- */
+const copyBtn = document.getElementById("copyBtn");
+if (copyBtn) {
+  const label = copyBtn.querySelector(".copy-label");
+  let timer;
+  copyBtn.addEventListener("click", () => {
+    navigator.clipboard?.writeText(CODE_LINES.join("\n")).catch(() => {});
+    copyBtn.classList.add("copied");
+    label.textContent = "Copied!";
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      copyBtn.classList.remove("copied");
+      label.textContent = "Copy";
+    }, 2000);
+  });
+}
+
+/* ---------- Reveal sections on scroll ---------- */
+document.querySelectorAll("[data-reveal-section]").forEach((section) => {
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           section.classList.add("in-view");
-          observer.unobserve(entry.target);
+          observer.disconnect();
         }
       });
     },
-    { threshold: 0.3 }
+    { threshold: 0.2 }
   );
   observer.observe(section);
 });
 
-document.querySelectorAll(".lang-list a[data-lang]").forEach((link) => {
-  const segment = document.querySelector(`.lang-bar span[data-lang="${link.dataset.lang}"]`);
-  if (!segment) return;
-  link.addEventListener("mouseenter", () => segment.classList.add("glowing"));
-  link.addEventListener("mouseleave", () => segment.classList.remove("glowing"));
-});
-
-const copyBtn = document.getElementById("copyBtn");
-const codeSnippet = document.getElementById("codeSnippet");
-if (copyBtn && codeSnippet) {
-  copyBtn.addEventListener("click", async () => {
-    await navigator.clipboard.writeText(codeSnippet.textContent);
-    copyBtn.textContent = "Copied!";
-    setTimeout(() => {
-      copyBtn.textContent = "Copy";
-    }, 1500);
+/* ---------- Language hover glow ---------- */
+const langBar = document.getElementById("langBar");
+if (langBar) {
+  const segments = langBar.querySelectorAll("span[data-lang]");
+  const links = document.querySelectorAll(".lang-list a[data-lang]");
+  const setActive = (lang) => {
+    langBar.classList.toggle("has-active", !!lang);
+    segments.forEach((s) => s.classList.toggle("active", s.dataset.lang === lang));
+    links.forEach((l) => l.classList.toggle("active", l.dataset.lang === lang));
+  };
+  [...segments, ...links].forEach((node) => {
+    node.addEventListener("mouseenter", () => setActive(node.dataset.lang));
+    node.addEventListener("mouseleave", () => setActive(null));
+    node.addEventListener("focus", () => setActive(node.dataset.lang));
+    node.addEventListener("blur", () => setActive(null));
   });
 }
+
+/* ---------- Popups (download + screenshot) ---------- */
+let lastFocus = null;
+function openOverlay(el) {
+  lastFocus = document.activeElement;
+  el.hidden = false;
+  requestAnimationFrame(() => el.classList.add("open"));
+  document.body.style.overflow = "hidden";
+  const focusTarget = el.querySelector("button, a");
+  if (focusTarget) focusTarget.focus({ preventScroll: true });
+}
+function closeOverlay(el) {
+  if (el.hidden) return;
+  el.classList.remove("open");
+  document.body.style.overflow = "";
+  setTimeout(() => { el.hidden = true; }, 200);
+  if (lastFocus) lastFocus.focus({ preventScroll: true });
+}
+
+const lightbox = document.getElementById("lightbox");
+const downloadModal = document.getElementById("downloadModal");
+
+document.getElementById("previewBtn").addEventListener("click", () => openOverlay(lightbox));
+lightbox.addEventListener("click", () => closeOverlay(lightbox));
+
+document.getElementById("downloadBtn").addEventListener("click", () => openOverlay(downloadModal));
+document.getElementById("modalClose").addEventListener("click", () => closeOverlay(downloadModal));
+downloadModal.addEventListener("click", (e) => {
+  if (e.target === downloadModal) closeOverlay(downloadModal);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeOverlay(lightbox);
+    closeOverlay(downloadModal);
+  }
+});
