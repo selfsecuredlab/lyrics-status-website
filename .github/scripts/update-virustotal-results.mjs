@@ -56,6 +56,30 @@ export function sameResultData(left, right) {
   return data(left) === data(right);
 }
 
+export function getVirusTotalUploadUrl(value) {
+  let uploadUrl;
+  try {
+    uploadUrl = new URL(value);
+  } catch {
+    throw new Error('VirusTotal did not return a valid upload URL');
+  }
+
+  const hostname = uploadUrl.hostname.toLowerCase().replace(/\.$/, '');
+  if (hostname !== 'virustotal.com' && !hostname.endsWith('.virustotal.com')) {
+    throw new Error(`VirusTotal returned an unexpected upload host: ${hostname || 'unknown'}`);
+  }
+  if (uploadUrl.protocol !== 'http:' && uploadUrl.protocol !== 'https:') {
+    throw new Error('VirusTotal returned an unexpected upload protocol');
+  }
+  if (uploadUrl.username || uploadUrl.password || (uploadUrl.port && uploadUrl.port !== '443')) {
+    throw new Error('VirusTotal returned an unsafe upload URL');
+  }
+
+  uploadUrl.hostname = hostname;
+  uploadUrl.protocol = 'https:';
+  return uploadUrl;
+}
+
 async function getRelease() {
   const url = REQUESTED_RELEASE_TAG
     ? `${GITHUB_RELEASES_API}/tags/${encodeURIComponent(REQUESTED_RELEASE_TAG)}`
@@ -151,13 +175,7 @@ async function submitMissingFile(asset, sha256) {
 
   const uploadUrlValue = (await urlResponse.json())?.data;
   if (typeof uploadUrlValue !== 'string') throw new Error('VirusTotal did not return an upload URL');
-  const uploadUrl = new URL(uploadUrlValue);
-  if (uploadUrl.hostname.toLowerCase() !== 'www.virustotal.com') {
-    throw new Error('VirusTotal returned an unexpected upload host');
-  }
-  // VirusTotal's upload URL response has historically used http in its example;
-  // keep the API key protected in transit by using the same host over HTTPS.
-  uploadUrl.protocol = 'https:';
+  const uploadUrl = getVirusTotalUploadUrl(uploadUrlValue);
 
   const form = new FormData();
   form.append('file', new Blob([bytes], { type: 'application/octet-stream' }), asset.name);

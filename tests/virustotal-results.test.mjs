@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   buildFileResult,
+  getVirusTotalUploadUrl,
   normalizeStats,
   sameResultData
 } from '../.github/scripts/update-virustotal-results.mjs';
@@ -49,4 +50,32 @@ test('detects unchanged results without treating the refresh timestamp as data',
 
   assert.equal(sameResultData(previous, same), true);
   assert.equal(sameResultData(previous, { ...same, release: 'v1.2.0' }), false);
+});
+
+test('upgrades a documented VirusTotal upload URL to HTTPS', () => {
+  const uploadUrl = getVirusTotalUploadUrl('http://www.virustotal.com/_ah/upload/one-time-token/');
+
+  assert.equal(uploadUrl.protocol, 'https:');
+  assert.equal(uploadUrl.hostname, 'www.virustotal.com');
+  assert.equal(uploadUrl.pathname, '/_ah/upload/one-time-token/');
+});
+
+test('accepts an official VirusTotal upload subdomain', () => {
+  const uploadUrl = getVirusTotalUploadUrl('https://upload.virustotal.com/_ah/upload/one-time-token/');
+
+  assert.equal(uploadUrl.hostname, 'upload.virustotal.com');
+});
+
+test('rejects lookalike upload hosts and reports only the hostname', () => {
+  assert.throws(
+    () => getVirusTotalUploadUrl('https://virustotal.com.attacker.example/_ah/upload/token/'),
+    /unexpected upload host: virustotal\.com\.attacker\.example/
+  );
+});
+
+test('rejects unsupported upload URL protocols', () => {
+  assert.throws(
+    () => getVirusTotalUploadUrl('ftp://www.virustotal.com/_ah/upload/token/'),
+    /unexpected upload protocol/
+  );
 });
