@@ -183,3 +183,136 @@ document.addEventListener("keydown", (e) => {
     closeOverlay(downloadModal);
   }
 });
+
+/* ---------- Current release + matching VirusTotal reports ---------- */
+const RELEASE_API = "https://api.github.com/repos/selfsecuredlab/lyrics-status/releases/latest";
+const VIRUSTOTAL_RESULTS_URL = "virustotal-results.json";
+const RELEASE_ASSET_PATTERNS = {
+  setup: /setup.*\.exe$/i,
+  portable: /portable.*\.exe$/i,
+};
+
+function getAssetSha256(asset) {
+  const digest = String(asset?.digest || "").replace(/^sha256:/i, "");
+  return /^[a-f0-9]{64}$/i.test(digest) ? digest.toLowerCase() : "";
+}
+
+function isTrustedReleaseUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:"
+      && url.hostname === "github.com"
+      && url.pathname.startsWith("/selfsecuredlab/lyrics-status/releases/download/");
+  } catch {
+    return false;
+  }
+}
+
+function setVirusTotalBadge(key, text, reportUrl) {
+  const link = document.querySelector(`[data-vt-link="${key}"]`);
+  const label = document.querySelector(`[data-vt-summary="${key}"]`);
+  if (label) label.textContent = text;
+  if (!link) return;
+
+  if (reportUrl) {
+    link.href = reportUrl;
+    link.removeAttribute("aria-disabled");
+    link.removeAttribute("tabindex");
+  } else {
+    link.removeAttribute("href");
+    link.setAttribute("aria-disabled", "true");
+    link.setAttribute("tabindex", "-1");
+  }
+}
+
+function summarizeVirusTotalFile(file) {
+  const stats = file?.stats;
+  if (file?.status !== "available" || !stats || typeof stats !== "object") return null;
+
+  const count = (value) => {
+    const number = Number(value || 0);
+    return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
+  };
+  const flagged = count(stats.malicious) + count(stats.suspicious);
+  const notFlagged = count(stats.harmless) + count(stats.undetected);
+  const noVerdict = count(stats.timeout)
+    + count(stats["confirmed-timeout"])
+    + count(stats.failure)
+    + count(stats["type-unsupported"]);
+  const parts = [`${notFlagged} not flagged`, `${flagged} flagged`];
+  if (noVerdict > 0) parts.push(`${noVerdict} no verdict`);
+  return parts.join(" · ");
+}
+
+async function hydrateReleaseAndScanStatus() {
+  const summary = document.getElementById("releaseScanSummary");
+  const fallbackTag = downloadModal?.dataset.releaseFallback || "v1.1.0";
+  let latestTag = fallbackTag;
+  let releaseAssets = {};
+
+  try {
+    const response = await fetch(RELEASE_API, {
+      headers: { Accept: "application/vnd.github+json" },
+    });
+    if (!response.ok) throw new Error(`Latest release request returned ${response.status}`);
+
+    const release = await response.json();
+    if (typeof release.tag_name === "string" && release.tag_name) latestTag = release.tag_name;
+    for (const [key, pattern] of Object.entries(RELEASE_ASSET_PATTERNS)) {
+      const asset = release.assets?.find((candidate) => pattern.test(candidate.name));
+      if (!asset) continue;
+      releaseAssets[key] = asset;
+      const download = document.querySelector(`[data-download="${key}"]`);
+      if (download && isTrustedReleaseUrl(asset.browser_download_url)) {
+        download.href = asset.browser_download_url;
+      }
+    }
+  } catch {
+    // Keep the checked-in release links available if GitHub's API is unavailable.
+  }
+
+  let results = null;
+  try {
+    const response = await fetch(`${VIRUSTOTAL_RESULTS_URL}?v=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`VirusTotal cache request returned ${response.status}`);
+    results = await response.json();
+  } catch {
+    // The reports are optional; download links remain usable without the cache.
+  }
+
+  const cacheMatchesRelease = results?.release === latestTag;
+  let reportsAvailable = 0;
+  for (const key of Object.keys(RELEASE_ASSET_PATTERNS)) {
+    const cached = results?.files?.[key];
+    const releaseHash = getAssetSha256(releaseAssets[key]);
+    const rawCachedHash = String(cached?.sha256 || "").toLowerCase();
+    const cachedHash = /^[a-f0-9]{64}$/.test(rawCachedHash) ? rawCachedHash : "";
+    const matchingHash = cacheMatchesRelease && (!releaseHash || releaseHash === cachedHash);
+    const currentHash = releaseHash || (cacheMatchesRelease ? cachedHash : "");
+    const reportUrl = currentHash
+      ? `https://www.virustotal.com/gui/file/${currentHash}/detection`
+      : "";
+
+    if (cacheMatchesRelease && matchingHash) {
+      const label = summarizeVirusTotalFile(cached);
+      if (label) {
+        setVirusTotalBadge(key, label, reportUrl);
+        reportsAvailable += 1;
+        continue;
+      }
+    }
+
+    const pendingText = cacheMatchesRelease && cached?.status === "not_found"
+      ? "Not analyzed yet"
+      : `Scan pending for ${latestTag}`;
+    setVirusTotalBadge(key, pendingText, reportUrl);
+  }
+
+  if (summary) {
+    summary.textContent = reportsAvailable === 2
+      ? `VirusTotal results for ${latestTag} · exact file hashes`
+      : `VirusTotal scan for ${latestTag} is pending · downloads are available`;
+  }
+}
+
+void hydrateReleaseAndScanStatus();

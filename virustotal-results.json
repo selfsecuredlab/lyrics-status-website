@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "release": "v1.1.0",
+  "updatedAt": null,
+  "files": {
+    "setup": {
+      "name": "LyricsStatus-Setup-1.1.0.exe",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.1.0/LyricsStatus-Setup-1.1.0.exe",
+      "sha256": "243a6d805511919f5e1c7d17ee3bdbf6017ef2e9c721d73ecec35093b1d9d0fc",
+      "reportUrl": "https://www.virustotal.com/gui/file/243a6d805511919f5e1c7d17ee3bdbf6017ef2e9c721d73ecec35093b1d9d0fc/detection",
+      "status": "pending",
+      "lastAnalysisDate": null,
+      "stats": null
+    },
+    "portable": {
+      "name": "LyricsStatus-Portable-1.1.0.exe",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.1.0/LyricsStatus-Portable-1.1.0.exe",
+      "sha256": "33e4c0f8bab102f5898b47d72500c45415e5510225be8ecdfcd6c1470f7fd482",
+      "reportUrl": "https://www.virustotal.com/gui/file/33e4c0f8bab102f5898b47d72500c45415e5510225be8ecdfcd6c1470f7fd482/detection",
+      "status": "pending",
+      "lastAnalysisDate": null,
+      "stats": null
+    }
+  }
+}
