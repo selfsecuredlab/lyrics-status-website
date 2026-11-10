@@ -1,41 +1,41 @@
 {
   "schemaVersion": 1,
-  "release": "v1.1.0",
-  "updatedAt": "2026-11-10T03:15:25.507Z",
+  "release": "v1.1.1",
+  "updatedAt": "2026-11-10T03:53:22.516Z",
   "files": {
     "setup": {
-      "name": "LyricsStatus-Setup-1.1.0.exe",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.1.0/LyricsStatus-Setup-1.1.0.exe",
-      "sha256": "243a6d805511919f5e1c7d17ee3bdbf6017ef2e9c721d73ecec35093b1d9d0fc",
-      "reportUrl": "https://www.virustotal.com/gui/file/243a6d805511919f5e1c7d17ee3bdbf6017ef2e9c721d73ecec35093b1d9d0fc/detection",
+      "name": "LyricsStatus-Setup-1.1.1.exe",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.1.1/LyricsStatus-Setup-1.1.1.exe",
+      "sha256": "7be245f694f4efee7b4356b61be4b4e84c15a73f91365eab63f8165a5124db7c",
+      "reportUrl": "https://www.virustotal.com/gui/file/7be245f694f4efee7b4356b61be4b4e84c15a73f91365eab63f8165a5124db7c/detection",
       "status": "available",
-      "lastAnalysisDate": "2026-11-10T03:09:12.000Z",
-      "stats": {
-        "malicious": 0,
-        "suspicious": 0,
-        "harmless": 0,
-        "undetected": 58,
-        "timeout": 9,
-        "confirmed-timeout": 1,
-        "failure": 1,
-        "type-unsupported": 6
-      }
-    },
-    "portable": {
-      "name": "LyricsStatus-Portable-1.1.0.exe",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.1.0/LyricsStatus-Portable-1.1.0.exe",
-      "sha256": "33e4c0f8bab102f5898b47d72500c45415e5510225be8ecdfcd6c1470f7fd482",
-      "reportUrl": "https://www.virustotal.com/gui/file/33e4c0f8bab102f5898b47d72500c45415e5510225be8ecdfcd6c1470f7fd482/detection",
-      "status": "available",
-      "lastAnalysisDate": "2026-11-10T03:13:53.000Z",
+      "lastAnalysisDate": "2026-11-10T03:47:41.000Z",
       "stats": {
         "malicious": 1,
         "suspicious": 0,
         "harmless": 0,
-        "undetected": 63,
+        "undetected": 66,
+        "timeout": 2,
+        "confirmed-timeout": 0,
+        "failure": 0,
+        "type-unsupported": 6
+      }
+    },
+    "portable": {
+      "name": "LyricsStatus-Portable-1.1.1.exe",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.1.1/LyricsStatus-Portable-1.1.1.exe",
+      "sha256": "446ce4f22e866c33becdfa29b1c4e5e9184cafd641ee01276cfdb66081ae8cdf",
+      "reportUrl": "https://www.virustotal.com/gui/file/446ce4f22e866c33becdfa29b1c4e5e9184cafd641ee01276cfdb66081ae8cdf/detection",
+      "status": "available",
+      "lastAnalysisDate": "2026-11-10T03:51:50.000Z",
+      "stats": {
+        "malicious": 1,
+        "suspicious": 0,
+        "harmless": 0,
+        "undetected": 64,
         "timeout": 3,
         "confirmed-timeout": 0,
-        "failure": 2,
+        "failure": 1,
         "type-unsupported": 6
       }
     }
