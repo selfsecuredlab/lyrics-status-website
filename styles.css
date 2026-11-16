@@ -418,6 +418,48 @@ h1, h2, h3 { font-weight: 600; }
 .vt-badge svg { width: 0.875rem; height: 0.875rem; }
 .vt-badge b { font-weight: 600; color: var(--foreground); }
 
+/* ---------- All versions ---------- */
+.all-releases { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.25rem; }
+.all-releases-title {
+  font-size: 0.75rem; font-weight: 600; color: var(--muted-foreground);
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.all-releases-list {
+  margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;
+  max-height: 15rem; overflow-y: auto;
+}
+.all-releases-empty { font-size: 0.8125rem; color: var(--dim); padding: 0.25rem 0; }
+.release-row {
+  border: 1px solid var(--border); border-radius: calc(var(--radius) + 2px);
+  background: oklch(0.115 0 0 / 0.5); padding: 0.75rem 0.875rem;
+}
+.release-head { display: flex; align-items: baseline; gap: 0.5rem; }
+.release-tag { font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 600; color: var(--foreground); }
+.release-pre {
+  font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--primary); border: 1px solid var(--border); border-radius: 999px; padding: 0.05rem 0.4rem;
+}
+.release-date { margin-left: auto; font-size: 0.6875rem; color: var(--dim); }
+.release-assets { margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.release-asset {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  font-size: 0.6875rem; font-weight: 500; color: var(--foreground); text-decoration: none;
+  border: 1px solid var(--input); border-radius: 999px; padding: 0.25rem 0.625rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+.release-asset:hover { background: oklch(1 0 0 / 0.05); border-color: var(--foreground); }
+.release-asset::before { content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--dim); }
+.release-asset.os-windows::before { background: var(--windows); }
+.release-asset.os-macos::before { background: var(--foreground); }
+.release-asset.os-linux::before { background: var(--lang-js); }
+.release-asset-size { color: var(--dim); }
+.all-releases-link {
+  margin-top: 0.875rem; display: inline-flex; align-items: center; gap: 0.375rem;
+  font-size: 0.75rem; color: var(--muted-foreground); text-decoration: none;
+}
+.all-releases-link:hover { color: var(--foreground); }
+.all-releases-link svg { width: 0.875rem; height: 0.875rem; }
+
 /* ---------- Scroll reveal ---------- */
 .reveal {
   opacity: 0; filter: blur(10px); transform: translateY(24px) scale(0.985);
