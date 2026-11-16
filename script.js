@@ -191,13 +191,33 @@ document.addEventListener("keydown", (e) => {
 const RELEASE_API = "https://api.github.com/repos/selfsecuredlab/lyrics-status/releases/latest";
 const VIRUSTOTAL_RESULTS_URL = "virustotal-results.json";
 const RELEASE_ASSET_PATTERNS = {
-  setup: /setup.*\.exe$/i,
+  setup: /setup\.exe$/i,
   portable: /portable.*\.exe$/i,
 };
+const VIRUSTOTAL_RESULTS_PROMISE = (async () => {
+  try {
+    const response = await fetch(`${VIRUSTOTAL_RESULTS_URL}?v=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`VirusTotal cache request returned ${response.status}`);
+    return await response.json();
+  } catch {
+    return null;
+  }
+})();
 
 function getAssetSha256(asset) {
   const digest = String(asset?.digest || "").replace(/^sha256:/i, "");
   return /^[a-f0-9]{64}$/i.test(digest) ? digest.toLowerCase() : "";
+}
+
+function getVerifiedVirusTotalFile(results, releaseTag, asset, legacyKey = "") {
+  if (!asset || results?.release !== releaseTag) return null;
+  const cached = results.files?.[asset.name] || (legacyKey ? results.files?.[legacyKey] : null);
+  if (cached?.status !== "available") return null;
+
+  const assetHash = getAssetSha256(asset);
+  const cachedHash = String(cached.sha256 || "").toLowerCase();
+  if (assetHash) return assetHash === cachedHash ? cached : null;
+  return cached.downloadUrl === asset.browser_download_url ? cached : null;
 }
 
 function isTrustedReleaseUrl(value) {
@@ -249,7 +269,7 @@ function summarizeVirusTotalFile(file) {
 
 async function hydrateReleaseAndScanStatus() {
   const summary = document.getElementById("releaseScanSummary");
-  const fallbackTag = downloadModal?.dataset.releaseFallback || "v1.1.0";
+  const fallbackTag = downloadModal?.dataset.releaseFallback || "v2.0.0";
   let latestTag = fallbackTag;
   let releaseAssets = {};
 
@@ -262,7 +282,10 @@ async function hydrateReleaseAndScanStatus() {
     const release = await response.json();
     if (typeof release.tag_name === "string" && release.tag_name) latestTag = release.tag_name;
     for (const [key, pattern] of Object.entries(RELEASE_ASSET_PATTERNS)) {
-      const asset = release.assets?.find((candidate) => pattern.test(candidate.name));
+      const asset = release.assets?.find((candidate) => pattern.test(candidate.name))
+        || (key === "setup" ? release.assets?.find((candidate) => /\.exe$/i.test(candidate.name)) : null);
+      const option = document.querySelector(`[data-download-option="${key}"]`);
+      if (option) option.hidden = !asset;
       if (!asset) continue;
       releaseAssets[key] = asset;
       const download = document.querySelector(`[data-download="${key}"]`);
@@ -274,47 +297,29 @@ async function hydrateReleaseAndScanStatus() {
     // Keep the checked-in release links available if GitHub's API is unavailable.
   }
 
-  let results = null;
-  try {
-    const response = await fetch(`${VIRUSTOTAL_RESULTS_URL}?v=${Date.now()}`, { cache: "no-store" });
-    if (!response.ok) throw new Error(`VirusTotal cache request returned ${response.status}`);
-    results = await response.json();
-  } catch {
-    // The reports are optional; download links remain usable without the cache.
-  }
+  const results = await VIRUSTOTAL_RESULTS_PROMISE;
 
-  const cacheMatchesRelease = results?.release === latestTag;
   let reportsAvailable = 0;
-  for (const key of Object.keys(RELEASE_ASSET_PATTERNS)) {
-    const cached = results?.files?.[key];
-    const releaseHash = getAssetSha256(releaseAssets[key]);
-    const rawCachedHash = String(cached?.sha256 || "").toLowerCase();
-    const cachedHash = /^[a-f0-9]{64}$/.test(rawCachedHash) ? rawCachedHash : "";
-    const matchingHash = cacheMatchesRelease && (!releaseHash || releaseHash === cachedHash);
-    const currentHash = releaseHash || (cacheMatchesRelease ? cachedHash : "");
-    const reportUrl = currentHash
-      ? `https://www.virustotal.com/gui/file/${currentHash}/detection`
-      : "";
-
-    if (cacheMatchesRelease && matchingHash) {
-      const label = summarizeVirusTotalFile(cached);
-      if (label) {
-        setVirusTotalBadge(key, label, reportUrl);
-        reportsAvailable += 1;
-        continue;
-      }
+  const currentAssets = Object.entries(releaseAssets);
+  for (const [key, asset] of currentAssets) {
+    const cached = getVerifiedVirusTotalFile(results, latestTag, asset, key);
+    const hash = getAssetSha256(asset) || String(cached?.sha256 || "");
+    const reportUrl = hash ? `https://www.virustotal.com/gui/file/${hash}/detection` : "";
+    const label = summarizeVirusTotalFile(cached);
+    if (label) {
+      setVirusTotalBadge(key, label, cached.reportUrl || reportUrl);
+      reportsAvailable += 1;
+    } else {
+      setVirusTotalBadge(key, `Scan pending for ${latestTag}`, reportUrl);
     }
-
-    const pendingText = cacheMatchesRelease && cached?.status === "not_found"
-      ? "Not analyzed yet"
-      : `Scan pending for ${latestTag}`;
-    setVirusTotalBadge(key, pendingText, reportUrl);
   }
 
   if (summary) {
-    summary.textContent = reportsAvailable === 2
-      ? `VirusTotal results for ${latestTag} · exact file hashes`
-      : `VirusTotal scan for ${latestTag} is pending · downloads are available`;
+    summary.textContent = currentAssets.length > 0 && reportsAvailable === currentAssets.length
+      ? `VirusTotal results for ${latestTag} · exact Windows file hashes`
+      : reportsAvailable > 0
+        ? `VirusTotal has results for ${reportsAvailable} of ${currentAssets.length} Windows downloads in ${latestTag}`
+        : `VirusTotal scan for ${latestTag} is pending · downloads are available`;
   }
 }
 
@@ -441,6 +446,27 @@ async function renderAllReleases() {
           link.appendChild(sizeSpan);
         }
         assets.appendChild(link);
+
+        const cached = getVerifiedVirusTotalFile(
+          await VIRUSTOTAL_RESULTS_PROMISE,
+          release.tag_name,
+          asset,
+        );
+        const vtLink = document.createElement(cached ? "a" : "span");
+        vtLink.className = `release-asset-vt${cached ? "" : " pending"}`;
+        vtLink.textContent = cached ? "VT report" : "VT pending";
+        if (cached) {
+          vtLink.href = cached.reportUrl
+            || `https://www.virustotal.com/gui/file/${cached.sha256}/detection`;
+          vtLink.target = "_blank";
+          vtLink.rel = "noopener noreferrer";
+          vtLink.setAttribute("aria-label", `VirusTotal report for ${asset.name}`);
+        } else if (release.tag_name === (await VIRUSTOTAL_RESULTS_PROMISE)?.release) {
+          vtLink.title = "This release asset is not in the current VirusTotal results yet";
+        } else {
+          continue;
+        }
+        assets.appendChild(vtLink);
       }
       row.appendChild(assets);
     } else {

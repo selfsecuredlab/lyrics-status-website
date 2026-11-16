@@ -9,10 +9,7 @@ const TEMP_RESULTS_PATH = `${RESULTS_PATH}.tmp`;
 const API_KEY = process.env.VT_API_KEY?.trim();
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN?.trim();
 const REQUESTED_RELEASE_TAG = String(process.env.RELEASE_TAG || '').trim();
-const FILES = {
-  setup: /setup.*\.exe$/i,
-  portable: /portable.*\.exe$/i
-};
+const SCANNABLE_ASSET_PATTERN = /\.(?:exe|msi|dmg|appimage|deb|rpm|zip|tar\.gz)$/i;
 const STAT_KEYS = [
   'malicious',
   'suspicious',
@@ -219,23 +216,25 @@ async function main() {
 
   const previous = await readPreviousResults();
   const release = await getRelease();
-  const assets = Array.isArray(release.assets) ? release.assets : [];
-  const entries = Object.entries(FILES);
-  const files = {};
+  const assets = (Array.isArray(release.assets) ? release.assets : [])
+    .filter((asset) => SCANNABLE_ASSET_PATTERN.test(String(asset?.name || '')));
+  if (!assets.length) throw new Error(`Could not find scannable release assets in ${release.tag_name}`);
 
-  for (const [index, [key, pattern]] of entries.entries()) {
-    const asset = assets.find((candidate) => pattern.test(candidate.name));
-    if (!asset) throw new Error(`Could not find the ${key} executable in ${release.tag_name}`);
+  const files = {};
+  for (const [index, asset] of assets.entries()) {
     if (index > 0) await wait(30_000);
 
     const sha256 = await getSha256(asset);
     try {
-      files[key] = (await getVirusTotalResult(asset, sha256)) || await submitMissingFile(asset, sha256);
+      files[asset.name] = (await getVirusTotalResult(asset, sha256)) || await submitMissingFile(asset, sha256);
     } catch (error) {
-      const cached = previous.files?.[key];
+      const legacyKey = /setup.*\.exe$/i.test(asset.name)
+        ? 'setup'
+        : (/portable.*\.exe$/i.test(asset.name) ? 'portable' : null);
+      const cached = previous.files?.[asset.name] || (legacyKey ? previous.files?.[legacyKey] : null);
       if (cached?.sha256 === sha256 && cached.status === 'available') {
-        console.warn(`${error.message}; retaining the last successful ${key} result.`);
-        files[key] = cached;
+        console.warn(`${error.message}; retaining the last successful result for ${asset.name}.`);
+        files[asset.name] = cached;
       } else {
         throw error;
       }
@@ -243,7 +242,7 @@ async function main() {
   }
 
   const next = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     release: release.tag_name,
     updatedAt: previous.updatedAt,
     files
