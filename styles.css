@@ -426,7 +426,29 @@ h1, h2, h3 { font-weight: 600; }
 }
 .all-releases-list {
   margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;
-  max-height: 15rem; overflow-y: auto;
+  max-height: 15rem; overflow-y: auto; padding-right: 0.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--primary) 38%, var(--surface-raised)) transparent;
+  scroll-behavior: smooth; overscroll-behavior: contain;
+}
+.all-releases-list::-webkit-scrollbar { width: 5px; }
+.all-releases-list::-webkit-scrollbar-track {
+  background: transparent; border-radius: 999px; margin: 4px 0;
+}
+.all-releases-list::-webkit-scrollbar-thumb {
+  background: color-mix(in oklch, var(--primary) 38%, var(--surface-raised));
+  border: 1px solid transparent; border-radius: 999px; background-clip: padding-box;
+  transition: background-color 180ms ease;
+}
+.all-releases-list::-webkit-scrollbar-thumb:hover {
+  background: var(--primary); background-clip: padding-box;
+}
+.all-releases-list::-webkit-scrollbar-thumb:active {
+  background: var(--mint); background-clip: padding-box;
+}
+@media (prefers-reduced-motion: reduce) {
+  .all-releases-list { scroll-behavior: auto; }
+  .all-releases-list::-webkit-scrollbar-thumb { transition: none; }
 }
 .all-releases-empty { font-size: 0.8125rem; color: var(--dim); padding: 0.25rem 0; }
 .release-row {
