@@ -67,7 +67,7 @@ const CODE_LINES = [
   "git clone https://github.com/selfsecuredlab/lyrics-status.git",
   "cd lyrics-status",
   "npm ci",
-  "npm start",
+  "npm run tauri dev",
 ];
 const codeSnippet = document.getElementById("codeSnippet");
 if (codeSnippet) {
@@ -129,24 +129,6 @@ document.querySelectorAll("[data-reveal-section]").forEach((section) => {
   observer.observe(section);
 });
 
-/* ---------- Language hover glow ---------- */
-const langBar = document.getElementById("langBar");
-if (langBar) {
-  const segments = langBar.querySelectorAll("span[data-lang]");
-  const links = document.querySelectorAll(".lang-list a[data-lang]");
-  const setActive = (lang) => {
-    langBar.classList.toggle("has-active", !!lang);
-    segments.forEach((s) => s.classList.toggle("active", s.dataset.lang === lang));
-    links.forEach((l) => l.classList.toggle("active", l.dataset.lang === lang));
-  };
-  [...segments, ...links].forEach((node) => {
-    node.addEventListener("mouseenter", () => setActive(node.dataset.lang));
-    node.addEventListener("mouseleave", () => setActive(null));
-    node.addEventListener("focus", () => setActive(node.dataset.lang));
-    node.addEventListener("blur", () => setActive(null));
-  });
-}
-
 /* ---------- Popups (download + screenshot) ---------- */
 let lastFocus = null;
 function openOverlay(el) {
@@ -171,10 +153,13 @@ const downloadModal = document.getElementById("downloadModal");
 document.getElementById("previewBtn").addEventListener("click", () => openOverlay(lightbox));
 lightbox.addEventListener("click", () => closeOverlay(lightbox));
 
-document.getElementById("downloadBtn").addEventListener("click", () => {
+function showDownloads() {
   openOverlay(downloadModal);
   ensureAllReleases();
-});
+}
+
+document.getElementById("downloadBtn").addEventListener("click", showDownloads);
+document.getElementById("previewDownloadBtn").addEventListener("click", showDownloads);
 document.getElementById("modalClose").addEventListener("click", () => closeOverlay(downloadModal));
 downloadModal.addEventListener("click", (e) => {
   if (e.target === downloadModal) closeOverlay(downloadModal);
@@ -187,13 +172,9 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/* ---------- Current release + matching VirusTotal reports ---------- */
+/* ---------- Current release + per-file VirusTotal reports ---------- */
 const RELEASE_API = "https://api.github.com/repos/selfsecuredlab/lyrics-status/releases/latest";
 const VIRUSTOTAL_RESULTS_URL = "virustotal-results.json";
-const RELEASE_ASSET_PATTERNS = {
-  setup: /setup\.exe$/i,
-  portable: /portable.*\.exe$/i,
-};
 const VIRUSTOTAL_RESULTS_PROMISE = (async () => {
   try {
     const response = await fetch(`${VIRUSTOTAL_RESULTS_URL}?v=${Date.now()}`, { cache: "no-store" });
@@ -231,100 +212,6 @@ function isTrustedReleaseUrl(value) {
   }
 }
 
-function setVirusTotalBadge(key, text, reportUrl) {
-  const link = document.querySelector(`[data-vt-link="${key}"]`);
-  const label = document.querySelector(`[data-vt-summary="${key}"]`);
-  if (label) label.textContent = text;
-  if (!link) return;
-
-  if (reportUrl) {
-    link.href = reportUrl;
-    link.removeAttribute("aria-disabled");
-    link.removeAttribute("tabindex");
-  } else {
-    link.removeAttribute("href");
-    link.setAttribute("aria-disabled", "true");
-    link.setAttribute("tabindex", "-1");
-  }
-}
-
-function summarizeVirusTotalFile(file) {
-  const stats = file?.stats;
-  if (file?.status !== "available" || !stats || typeof stats !== "object") return null;
-
-  const count = (value) => {
-    const number = Number(value || 0);
-    return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
-  };
-  const flagged = count(stats.malicious) + count(stats.suspicious);
-  const notFlagged = count(stats.harmless) + count(stats.undetected);
-  const noVerdict = count(stats.timeout)
-    + count(stats["confirmed-timeout"])
-    + count(stats.failure)
-    + count(stats["type-unsupported"]);
-  const parts = [`${notFlagged} not flagged`, `${flagged} flagged`];
-  if (noVerdict > 0) parts.push(`${noVerdict} no verdict`);
-  return parts.join(" · ");
-}
-
-async function hydrateReleaseAndScanStatus() {
-  const summary = document.getElementById("releaseScanSummary");
-  const fallbackTag = downloadModal?.dataset.releaseFallback || "v2.0.0";
-  let latestTag = fallbackTag;
-  let releaseAssets = {};
-
-  try {
-    const response = await fetch(RELEASE_API, {
-      headers: { Accept: "application/vnd.github+json" },
-    });
-    if (!response.ok) throw new Error(`Latest release request returned ${response.status}`);
-
-    const release = await response.json();
-    if (typeof release.tag_name === "string" && release.tag_name) latestTag = release.tag_name;
-    for (const [key, pattern] of Object.entries(RELEASE_ASSET_PATTERNS)) {
-      const asset = release.assets?.find((candidate) => pattern.test(candidate.name))
-        || (key === "setup" ? release.assets?.find((candidate) => /\.exe$/i.test(candidate.name)) : null);
-      const option = document.querySelector(`[data-download-option="${key}"]`);
-      if (option) option.hidden = !asset;
-      if (!asset) continue;
-      releaseAssets[key] = asset;
-      const download = document.querySelector(`[data-download="${key}"]`);
-      if (download && isTrustedReleaseUrl(asset.browser_download_url)) {
-        download.href = asset.browser_download_url;
-      }
-    }
-  } catch {
-    // Keep the checked-in release links available if GitHub's API is unavailable.
-  }
-
-  const results = await VIRUSTOTAL_RESULTS_PROMISE;
-
-  let reportsAvailable = 0;
-  const currentAssets = Object.entries(releaseAssets);
-  for (const [key, asset] of currentAssets) {
-    const cached = getVerifiedVirusTotalFile(results, latestTag, asset, key);
-    const hash = getAssetSha256(asset) || String(cached?.sha256 || "");
-    const reportUrl = hash ? `https://www.virustotal.com/gui/file/${hash}/detection` : "";
-    const label = summarizeVirusTotalFile(cached);
-    if (label) {
-      setVirusTotalBadge(key, label, cached.reportUrl || reportUrl);
-      reportsAvailable += 1;
-    } else {
-      setVirusTotalBadge(key, `Scan pending for ${latestTag}`, reportUrl);
-    }
-  }
-
-  if (summary) {
-    summary.textContent = currentAssets.length > 0 && reportsAvailable === currentAssets.length
-      ? `VirusTotal results for ${latestTag} · exact Windows file hashes`
-      : reportsAvailable > 0
-        ? `VirusTotal has results for ${reportsAvailable} of ${currentAssets.length} Windows downloads in ${latestTag}`
-        : `VirusTotal scan for ${latestTag} is pending · downloads are available`;
-  }
-}
-
-void hydrateReleaseAndScanStatus();
-
 /* ---------- All versions (every published release) ---------- */
 const ALL_RELEASES_API =
   "https://api.github.com/repos/selfsecuredlab/lyrics-status/releases?per_page=100";
@@ -334,11 +221,11 @@ const ASSET_PLATFORMS = [
   { test: /setup.*\.exe$/i, label: "Windows Installer", os: "windows" },
   { test: /portable.*\.exe$/i, label: "Windows Portable", os: "windows" },
   { test: /\.msi$/i, label: "Windows (MSI)", os: "windows" },
-  { test: /\.dmg$/i, label: "macOS (DMG)", os: "macos" },
-  { test: /\.app\.tar\.gz$/i, label: "macOS (app)", os: "macos" },
+  { test: /\.dmg$/i, label: "Universal DMG", os: "macos" },
+  { test: /\.app\.tar\.gz$/i, label: "App archive", os: "macos" },
   { test: /\.AppImage$/i, label: "Linux (AppImage)", os: "linux" },
-  { test: /\.deb$/i, label: "Linux (deb)", os: "linux" },
-  { test: /\.rpm$/i, label: "Linux (rpm)", os: "linux" },
+  { test: /\.deb$/i, label: "Debian / Ubuntu (.deb)", os: "linux" },
+  { test: /\.rpm$/i, label: "Fedora / RHEL (.rpm)", os: "linux" },
   { test: /\.exe$/i, label: "Windows", os: "windows" },
 ];
 
@@ -358,6 +245,154 @@ function formatBytes(value) {
   }
   return `${v.toFixed(v < 10 && i > 0 ? 1 : 0)} ${units[i]}`;
 }
+
+function makeTextElement(tag, className, text) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (text != null) element.textContent = text;
+  return element;
+}
+
+function makeVirusTotalLink(asset, releaseTag, results) {
+  const cached = getVerifiedVirusTotalFile(results, releaseTag, asset);
+  const hash = getAssetSha256(asset) || String(cached?.sha256 || "");
+  const reportUrl = hash ? `https://www.virustotal.com/gui/file/${hash}/detection` : "";
+  const stats = cached?.stats;
+  const flagged = Number(stats?.malicious || 0) + Number(stats?.suspicious || 0);
+  const scanLabel = cached ? (flagged ? `${flagged} flagged · report` : "No flagged engines · report") : "Scan pending";
+  const link = makeTextElement(cached ? "a" : "span", `download-scan${cached ? (flagged ? " has-flags" : "") : " pending"}`, scanLabel);
+  if (cached) {
+    const reportedUrl = typeof cached.reportUrl === "string"
+      && cached.reportUrl.startsWith("https://www.virustotal.com/gui/file/")
+      ? cached.reportUrl
+      : reportUrl;
+    link.href = reportedUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.title = summarizeVirusTotalFile(cached) || "Open the VirusTotal file report";
+    link.setAttribute("aria-label", `VirusTotal report for ${asset.name}`);
+  } else {
+    link.title = `VirusTotal scan pending for ${releaseTag}`;
+  }
+  return link;
+}
+
+function summarizeVirusTotalFile(file) {
+  const stats = file?.stats;
+  if (file?.status !== "available" || !stats || typeof stats !== "object") return "";
+  const count = (value) => {
+    const number = Number(value || 0);
+    return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
+  };
+  const flagged = count(stats.malicious) + count(stats.suspicious);
+  const notFlagged = count(stats.harmless) + count(stats.undetected);
+  return `${notFlagged} not flagged · ${flagged} flagged`;
+}
+
+function renderLatestDownloads(release, assets, results) {
+  const container = document.getElementById("latestDownloads");
+  if (!container) return;
+  const platformOrder = ["windows", "macos", "linux"];
+  const platformNames = { windows: "Windows", macos: "macOS", linux: "Linux" };
+  const platformNotes = {
+    windows: "Windows 10 or newer",
+    macos: "Intel + Apple silicon",
+    linux: "Choose your package",
+  };
+  const buildPriority = {
+    "Windows Installer": 0,
+    "Windows Portable": 1,
+    "Windows (MSI)": 2,
+    "Universal DMG": 0,
+    "App archive": 1,
+    "Linux (AppImage)": 0,
+    "Debian / Ubuntu (.deb)": 1,
+    "Fedora / RHEL (.rpm)": 2,
+  };
+  const groups = new Map(platformOrder.map((os) => [os, []]));
+  assets.forEach(({ asset, platform }) => groups.get(platform.os)?.push({ asset, platform }));
+  const fragment = document.createDocumentFragment();
+  let count = 0;
+
+  for (const os of platformOrder) {
+    const builds = groups.get(os);
+    if (!builds?.length) continue;
+    builds.sort((a, b) => (buildPriority[a.platform.label] ?? 9) - (buildPriority[b.platform.label] ?? 9));
+    const card = makeTextElement("section", `download-platform os-${os}`);
+    card.setAttribute("aria-label", `${platformNames[os]} downloads`);
+    const heading = makeTextElement("div", "download-platform-heading");
+    const mark = makeTextElement("span", "download-platform-mark", os === "windows" ? "Win" : os === "macos" ? "Mac" : "Linux");
+    mark.setAttribute("aria-hidden", "true");
+    const headingCopy = makeTextElement("div", "download-platform-copy");
+    headingCopy.append(
+      makeTextElement("h4", "download-platform-name", platformNames[os]),
+      makeTextElement("p", "download-platform-note", platformNotes[os]),
+    );
+    heading.append(mark, headingCopy);
+    card.appendChild(heading);
+
+    const buildList = makeTextElement("div", "download-build-list");
+    builds.forEach(({ asset, platform }, index) => {
+      count += 1;
+      const row = makeTextElement("div", `download-build${index === 0 ? " download-build--featured" : ""}`);
+      const link = makeTextElement("a", "download-build-link");
+      link.href = asset.browser_download_url;
+      link.rel = "noopener noreferrer";
+      link.setAttribute("aria-label", `Download ${platform.label}, ${formatBytes(asset.size) || "file size unavailable"}`);
+      const details = makeTextElement("span", "download-build-details");
+      details.append(
+        makeTextElement("strong", "download-build-name", platform.label),
+        makeTextElement("small", "download-build-size", formatBytes(asset.size) || "Release file"),
+      );
+      const action = makeTextElement("span", "download-build-action", "Download");
+      action.appendChild(makeTextElement("span", "download-arrow", "↗"));
+      link.append(details, action);
+      row.append(link, makeVirusTotalLink(asset, release.tag_name, results));
+      buildList.appendChild(row);
+    });
+    card.appendChild(buildList);
+    fragment.appendChild(card);
+  }
+
+  if (!count) {
+    container.replaceChildren(makeTextElement("p", "download-loading", "No compatible downloads were found for this release."));
+    return;
+  }
+  container.replaceChildren(fragment);
+  const version = document.getElementById("releaseVersion");
+  if (version) version.textContent = release.tag_name || "Latest";
+  const summary = document.getElementById("releaseScanSummary");
+  if (summary) {
+    const platforms = platformOrder.filter((os) => groups.get(os)?.length).map((os) => platformNames[os]);
+    summary.textContent = `${count} downloads for ${platforms.join(", ")} · VirusTotal reports linked per file when available`;
+  }
+}
+
+async function hydrateLatestDownloads() {
+  const container = document.getElementById("latestDownloads");
+  const summary = document.getElementById("releaseScanSummary");
+  const resultsPromise = VIRUSTOTAL_RESULTS_PROMISE;
+  try {
+    const response = await fetch(RELEASE_API, { headers: { Accept: "application/vnd.github+json" } });
+    if (!response.ok) throw new Error(`Latest release request returned ${response.status}`);
+    const release = await response.json();
+    const assets = (Array.isArray(release.assets) ? release.assets : [])
+      .map((asset) => ({ asset, platform: classifyAsset(asset.name) }))
+      .filter(({ asset, platform }) => platform && isTrustedReleaseUrl(asset.browser_download_url));
+    renderLatestDownloads(release, assets, await resultsPromise);
+  } catch {
+    if (container) {
+      const link = makeTextElement("a", "download-fallback", "Browse the latest downloads on GitHub ↗");
+      link.href = "https://github.com/selfsecuredlab/lyrics-status/releases/latest";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      container.replaceChildren(link);
+    }
+    if (summary) summary.textContent = "Release details are unavailable right now.";
+  }
+}
+
+void hydrateLatestDownloads();
 
 let allReleasesLoaded = false;
 function ensureAllReleases() {

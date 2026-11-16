@@ -9,6 +9,7 @@
   <meta property="og:description" content="Sync the exact lyric line you're listening to on Spotify into your Discord status." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <script>
     if ("scrollRestoration" in history) {
       history.scrollRestoration = "manual";
@@ -17,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=5" />
 </head>
 <body>
 
@@ -89,9 +90,23 @@
 
           <div class="hero-preview rise" style="animation-delay: 260ms">
             <span class="preview-edge" aria-hidden="true"></span>
-            <button type="button" class="preview-frame" id="previewBtn" aria-label="Enlarge app preview">
-              <img src="assets/app image.png" alt="LyricsStatus app preview" id="heroPreviewImg" />
-            </button>
+            <div class="preview-shell">
+              <div class="preview-toolbar">
+                <span class="preview-brand"><span class="preview-brand-mark" aria-hidden="true">♪</span> LyricsStatus <span class="preview-toolbar-label">CONTROL CENTER</span></span>
+                <span class="preview-status"><span aria-hidden="true"></span> App preview</span>
+              </div>
+              <button type="button" class="preview-frame" id="previewBtn" aria-label="Open a larger app preview">
+                <img src="assets/app image.png" alt="LyricsStatus control center with live Discord activity and Spotify track preview" id="heroPreviewImg" />
+                <span class="preview-zoom" aria-hidden="true">View full preview <span>↗</span></span>
+              </button>
+              <div class="preview-caption">
+                <div>
+                  <p class="preview-caption-kicker">YOUR DESKTOP, IN SYNC</p>
+                  <p class="preview-caption-copy">Tune your lyrics. See your Discord activity update.</p>
+                </div>
+                <button type="button" class="preview-caption-link" id="previewDownloadBtn">Get the app <span aria-hidden="true">↗</span></button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -108,7 +123,7 @@
               <span class="step-icon step-icon--download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg></span>
               <span class="step-number">01</span>
               <h3>Install LyricsStatus</h3>
-              <p>Run the Windows installer or open the portable version.</p>
+              <p>Choose the right build for Windows, macOS, or Linux.</p>
             </li>
             <li class="step-arrow reveal" style="--d: 200ms" aria-hidden="true">
               <span class="arrow-flow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
@@ -140,7 +155,8 @@
           <div class="reveal reveal-left">
             <p class="eyebrow">For developers</p>
             <h2 class="section-title">Build it from source</h2>
-            <p class="section-text">Clone the repo and run it locally with Node.js 20 or newer.</p>
+            <p class="section-text">Install stable Rust and Node.js 20+ for the Tauri CLI, then add your platform’s build prerequisites.</p>
+            <a class="stack-source-link build-prereq-link" href="https://tauri.app/start/prerequisites/" target="_blank" rel="noopener noreferrer">View platform prerequisites <span aria-hidden="true">↗</span></a>
           </div>
 
           <div class="terminal-wrap reveal reveal-right" style="--d: 150ms">
@@ -166,27 +182,32 @@
     </section>
 
     <!-- Built with -->
-    <section class="lang-section" data-reveal-section>
+    <section class="stack-section" data-reveal-section>
       <div class="container">
-        <div class="frame section split">
-          <h2 class="section-title reveal">Built with</h2>
+        <div class="frame section stack-layout">
+          <div class="stack-intro reveal reveal-left">
+            <p class="eyebrow">Small footprint. Native feel.</p>
+            <h2 class="section-title">Built with Rust</h2>
+            <p class="section-text">A focused Rust core, wrapped in Tauri v2 and a lightweight web interface. One app, built for Windows, macOS, and Linux.</p>
+            <a class="stack-source-link" href="https://github.com/selfsecuredlab/lyrics-status" target="_blank" rel="noopener noreferrer">Explore the source <span aria-hidden="true">↗</span></a>
+          </div>
 
-          <div class="reveal" style="--d: 150ms">
-            <div class="lang-bar" id="langBar">
-              <span data-lang="typescript" style="width: 79.8%; --c: var(--lang-ts)"></span>
-              <span data-lang="javascript" style="width: 12.2%; --c: var(--lang-js)"></span>
-              <span data-lang="html" style="width: 4.1%; --c: var(--lang-html)"></span>
-              <span data-lang="css" style="width: 3.6%; --c: var(--lang-css)"></span>
-              <span data-lang="powershell" style="width: 0.3%; --c: var(--lang-ps)"></span>
-            </div>
-
-            <ul class="lang-list">
-              <li><a href="https://github.com/selfsecuredlab/lyrics-status/search?l=typescript" target="_blank" rel="noopener noreferrer" data-lang="typescript" style="--c: var(--lang-ts)"><span class="lang-name"><span class="lang-dot"></span>TypeScript</span><b>79.8%</b></a></li>
-              <li><a href="https://github.com/selfsecuredlab/lyrics-status/search?l=javascript" target="_blank" rel="noopener noreferrer" data-lang="javascript" style="--c: var(--lang-js)"><span class="lang-name"><span class="lang-dot"></span>JavaScript</span><b>12.2%</b></a></li>
-              <li><a href="https://github.com/selfsecuredlab/lyrics-status/search?l=html" target="_blank" rel="noopener noreferrer" data-lang="html" style="--c: var(--lang-html)"><span class="lang-name"><span class="lang-dot"></span>HTML</span><b>4.1%</b></a></li>
-              <li><a href="https://github.com/selfsecuredlab/lyrics-status/search?l=css" target="_blank" rel="noopener noreferrer" data-lang="css" style="--c: var(--lang-css)"><span class="lang-name"><span class="lang-dot"></span>CSS</span><b>3.6%</b></a></li>
-              <li><a href="https://github.com/selfsecuredlab/lyrics-status/search?l=powershell" target="_blank" rel="noopener noreferrer" data-lang="powershell" style="--c: var(--lang-ps)"><span class="lang-name"><span class="lang-dot"></span>PowerShell</span><b>0.3%</b></a></li>
-            </ul>
+          <div class="stack-cards reveal reveal-right" style="--d: 150ms" aria-label="Technology stack">
+            <article class="stack-card stack-card--rust">
+              <span class="stack-card-index">01 / CORE</span>
+              <div class="stack-card-heading"><span class="stack-symbol stack-symbol--rust" aria-hidden="true">R</span><div><h3>Rust</h3><p>Application logic</p></div></div>
+              <span class="stack-card-detail">Fast, native backend</span>
+            </article>
+            <article class="stack-card stack-card--tauri">
+              <span class="stack-card-index">02 / DESKTOP</span>
+              <div class="stack-card-heading"><span class="stack-symbol stack-symbol--tauri" aria-hidden="true">T</span><div><h3>Tauri v2</h3><p>Desktop shell</p></div></div>
+              <span class="stack-card-detail">Uses the system WebView</span>
+            </article>
+            <article class="stack-card stack-card--web">
+              <span class="stack-card-index">03 / INTERFACE</span>
+              <div class="stack-card-heading"><span class="stack-symbol stack-symbol--web" aria-hidden="true">&lt;/&gt;</span><div><h3>Web UI</h3><p>HTML · CSS · JavaScript</p></div></div>
+              <span class="stack-card-detail">Responsive settings and preview</span>
+            </article>
           </div>
         </div>
       </div>
@@ -217,38 +238,24 @@
     <div class="modal-panel">
       <button class="btn btn-chip modal-close" id="modalClose" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
 
-      <div class="modal-header">
-        <span class="modal-win"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801" /></svg></span>
-        <div>
-          <h3 id="downloadTitle">Download LyricsStatus</h3>
-          <p id="releaseScanSummary" aria-live="polite">Checking the latest release and its VirusTotal reports…</p>
+      <div class="install-preview">
+        <img src="assets/app image.png" alt="LyricsStatus app showing its control center and Discord activity" />
+        <div class="install-preview-shade">
+          <span class="install-preview-kicker"><span aria-hidden="true"></span> LYRICSSTATUS DESKTOP</span>
+          <span class="install-preview-title">Your music. Your status.</span>
         </div>
       </div>
 
-      <div class="download-options">
-        <div class="download-option" data-download-option="setup">
-          <div>
-            <p class="download-option-title">Windows Installer</p>
-            <p class="download-option-desc">Recommended. Installs LyricsStatus and adds a shortcut</p>
-          </div>
-          <a class="btn btn-hero btn-sm" data-download="setup" href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.0/LyricsStatus_2.0.0_x64-setup.exe">Download</a>
-          <a class="vt-badge" data-vt-link="setup" aria-disabled="true" tabindex="-1" aria-label="VirusTotal report for the Windows installer">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-            <span data-vt-summary="setup">Waiting for the v2.0.0 scan</span>
-          </a>
+      <div class="modal-header">
+        <div>
+          <p class="modal-kicker">LATEST RELEASE <span id="releaseVersion">v2.0.0</span></p>
+          <h3 id="downloadTitle">Choose your download</h3>
+          <p id="releaseScanSummary" aria-live="polite">Finding the latest builds for Windows, macOS, and Linux…</p>
         </div>
+      </div>
 
-        <div class="download-option" data-download-option="portable" hidden>
-          <div>
-            <p class="download-option-title">Portable</p>
-            <p class="download-option-desc">No install. Just run the .exe</p>
-          </div>
-          <a class="btn btn-hero btn-sm" data-download="portable" href="https://github.com/selfsecuredlab/lyrics-status/releases/download/v1.1.1/LyricsStatus-Portable-1.1.1.exe">Download</a>
-          <a class="vt-badge" data-vt-link="portable" aria-disabled="true" tabindex="-1" aria-label="VirusTotal report for the portable app">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-            <span data-vt-summary="portable">No portable build in this release</span>
-          </a>
-        </div>
+      <div class="download-options" id="latestDownloads" aria-live="polite">
+        <p class="download-loading">Finding available builds…</p>
       </div>
 
       <div class="all-releases" id="allReleasesSection">
@@ -263,6 +270,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=4"></script>
+  <script src="script.js?v=5"></script>
 </body>
 </html>
