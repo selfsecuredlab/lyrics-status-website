@@ -1,15 +1,15 @@
 {
   "schemaVersion": 2,
-  "release": "v2.0.0",
-  "updatedAt": "2026-11-16T23:13:14.450Z",
+  "release": "v2.0.1",
+  "updatedAt": "2026-11-21T07:36:19.757Z",
   "files": {
-    "LyricsStatus-2.0.0-1.x86_64.rpm": {
-      "name": "LyricsStatus-2.0.0-1.x86_64.rpm",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.0/LyricsStatus-2.0.0-1.x86_64.rpm",
-      "sha256": "5e1f8efb34dcdb8b2a4aef9e542765809071e94e58c74aa84dcd5cf8b5410821",
-      "reportUrl": "https://www.virustotal.com/gui/file/5e1f8efb34dcdb8b2a4aef9e542765809071e94e58c74aa84dcd5cf8b5410821/detection",
+    "LyricsStatus-2.0.1-1.x86_64.rpm": {
+      "name": "LyricsStatus-2.0.1-1.x86_64.rpm",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.1/LyricsStatus-2.0.1-1.x86_64.rpm",
+      "sha256": "e68fdb9768217f72a1f3709541afc3cd6461d7f33d766e9a019578fc2901fb21",
+      "reportUrl": "https://www.virustotal.com/gui/file/e68fdb9768217f72a1f3709541afc3cd6461d7f33d766e9a019578fc2901fb21/detection",
       "status": "available",
-      "lastAnalysisDate": "2026-11-16T23:03:52.000Z",
+      "lastAnalysisDate": "2026-11-21T07:27:32.000Z",
       "stats": {
         "malicious": 0,
         "suspicious": 0,
@@ -21,85 +21,85 @@
         "type-unsupported": 13
       }
     },
-    "LyricsStatus_2.0.0_amd64.AppImage": {
-      "name": "LyricsStatus_2.0.0_amd64.AppImage",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.0/LyricsStatus_2.0.0_amd64.AppImage",
-      "sha256": "0c5f9977940badb5b7fb1eec84afb24138b2f473ff2ccdc3fa6176b376e712b7",
-      "reportUrl": "https://www.virustotal.com/gui/file/0c5f9977940badb5b7fb1eec84afb24138b2f473ff2ccdc3fa6176b376e712b7/detection",
+    "LyricsStatus_2.0.1_amd64.AppImage": {
+      "name": "LyricsStatus_2.0.1_amd64.AppImage",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.1/LyricsStatus_2.0.1_amd64.AppImage",
+      "sha256": "caa0141d5457814394f03daf24312372d6fd32dba91ecfb6fe81f43d0974a860",
+      "reportUrl": "https://www.virustotal.com/gui/file/caa0141d5457814394f03daf24312372d6fd32dba91ecfb6fe81f43d0974a860/detection",
       "status": "available",
-      "lastAnalysisDate": "2026-11-16T23:06:29.000Z",
+      "lastAnalysisDate": "2026-11-21T07:29:36.000Z",
       "stats": {
         "malicious": 0,
         "suspicious": 0,
         "harmless": 0,
         "undetected": 61,
-        "timeout": 1,
-        "confirmed-timeout": 0,
-        "failure": 0,
-        "type-unsupported": 12
-      }
-    },
-    "LyricsStatus_2.0.0_amd64.deb": {
-      "name": "LyricsStatus_2.0.0_amd64.deb",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.0/LyricsStatus_2.0.0_amd64.deb",
-      "sha256": "aed20703f787245eeedc800fe83658b0f4c085778d83aa015b3180ee92f862bb",
-      "reportUrl": "https://www.virustotal.com/gui/file/aed20703f787245eeedc800fe83658b0f4c085778d83aa015b3180ee92f862bb/detection",
-      "status": "available",
-      "lastAnalysisDate": "2026-11-16T23:08:32.000Z",
-      "stats": {
-        "malicious": 0,
-        "suspicious": 0,
-        "harmless": 0,
-        "undetected": 61,
-        "timeout": 0,
-        "confirmed-timeout": 0,
-        "failure": 0,
-        "type-unsupported": 13
-      }
-    },
-    "LyricsStatus_2.0.0_universal.dmg": {
-      "name": "LyricsStatus_2.0.0_universal.dmg",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.0/LyricsStatus_2.0.0_universal.dmg",
-      "sha256": "c8fb47dfcd1e0f3ca9c33aff361f8717c6e62d7ca4a1db07f9a172607775f5df",
-      "reportUrl": "https://www.virustotal.com/gui/file/c8fb47dfcd1e0f3ca9c33aff361f8717c6e62d7ca4a1db07f9a172607775f5df/detection",
-      "status": "available",
-      "lastAnalysisDate": "2026-11-16T23:09:36.000Z",
-      "stats": {
-        "malicious": 1,
-        "suspicious": 0,
-        "harmless": 0,
-        "undetected": 59,
         "timeout": 0,
         "confirmed-timeout": 0,
         "failure": 1,
-        "type-unsupported": 13
+        "type-unsupported": 12
       }
     },
-    "LyricsStatus_2.0.0_x64-setup.exe": {
-      "name": "LyricsStatus_2.0.0_x64-setup.exe",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.0/LyricsStatus_2.0.0_x64-setup.exe",
-      "sha256": "e80d8981ba14b9f97166ed18bb677104822ea10640d24d3407f9774fa2e8fd67",
-      "reportUrl": "https://www.virustotal.com/gui/file/e80d8981ba14b9f97166ed18bb677104822ea10640d24d3407f9774fa2e8fd67/detection",
+    "LyricsStatus_2.0.1_amd64.deb": {
+      "name": "LyricsStatus_2.0.1_amd64.deb",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.1/LyricsStatus_2.0.1_amd64.deb",
+      "sha256": "df9f84ba8f45230e2ccdb294ef1eb4693a280deb1b69ac0531ece1c97c4e39d4",
+      "reportUrl": "https://www.virustotal.com/gui/file/df9f84ba8f45230e2ccdb294ef1eb4693a280deb1b69ac0531ece1c97c4e39d4/detection",
       "status": "available",
-      "lastAnalysisDate": "2026-11-16T23:10:40.000Z",
+      "lastAnalysisDate": "2026-11-21T07:31:09.000Z",
       "stats": {
-        "malicious": 3,
+        "malicious": 0,
         "suspicious": 0,
         "harmless": 0,
-        "undetected": 68,
+        "undetected": 61,
         "timeout": 0,
         "confirmed-timeout": 0,
         "failure": 0,
+        "type-unsupported": 13
+      }
+    },
+    "LyricsStatus_2.0.1_universal.dmg": {
+      "name": "LyricsStatus_2.0.1_universal.dmg",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.1/LyricsStatus_2.0.1_universal.dmg",
+      "sha256": "fdc9e561057545f5ae1cf07a58bfb4de0970de6d4a1e1f78fb8c18d18df1557e",
+      "reportUrl": "https://www.virustotal.com/gui/file/fdc9e561057545f5ae1cf07a58bfb4de0970de6d4a1e1f78fb8c18d18df1557e/detection",
+      "status": "available",
+      "lastAnalysisDate": "2026-11-21T07:32:42.000Z",
+      "stats": {
+        "malicious": 0,
+        "suspicious": 0,
+        "harmless": 0,
+        "undetected": 61,
+        "timeout": 0,
+        "confirmed-timeout": 0,
+        "failure": 0,
+        "type-unsupported": 13
+      }
+    },
+    "LyricsStatus_2.0.1_x64-setup.exe": {
+      "name": "LyricsStatus_2.0.1_x64-setup.exe",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.1/LyricsStatus_2.0.1_x64-setup.exe",
+      "sha256": "fd4d450639846cfd721c26f01e115f526bd505dca6f3276f9a4d63bcdd617b91",
+      "reportUrl": "https://www.virustotal.com/gui/file/fd4d450639846cfd721c26f01e115f526bd505dca6f3276f9a4d63bcdd617b91/detection",
+      "status": "available",
+      "lastAnalysisDate": "2026-11-21T07:34:15.000Z",
+      "stats": {
+        "malicious": 5,
+        "suspicious": 0,
+        "harmless": 0,
+        "undetected": 65,
+        "timeout": 0,
+        "confirmed-timeout": 0,
+        "failure": 1,
         "type-unsupported": 3
       }
     },
     "LyricsStatus_universal.app.tar.gz": {
       "name": "LyricsStatus_universal.app.tar.gz",
-      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.0/LyricsStatus_universal.app.tar.gz",
-      "sha256": "4dba24da325ebaf0a23c3a9903de715316c917a4834edc8340619bea7b729223",
-      "reportUrl": "https://www.virustotal.com/gui/file/4dba24da325ebaf0a23c3a9903de715316c917a4834edc8340619bea7b729223/detection",
+      "downloadUrl": "https://github.com/selfsecuredlab/lyrics-status/releases/download/v2.0.1/LyricsStatus_universal.app.tar.gz",
+      "sha256": "113ab5c7145ad50d0eb5cfa11c61c5b2b642647df6472ba36b4797a84b439cc5",
+      "reportUrl": "https://www.virustotal.com/gui/file/113ab5c7145ad50d0eb5cfa11c61c5b2b642647df6472ba36b4797a84b439cc5/detection",
       "status": "available",
-      "lastAnalysisDate": "2026-11-16T23:12:43.000Z",
+      "lastAnalysisDate": "2026-11-21T07:35:18.000Z",
       "stats": {
         "malicious": 0,
         "suspicious": 0,
